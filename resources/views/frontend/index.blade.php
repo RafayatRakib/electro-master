@@ -476,87 +476,71 @@ $stopTime = $timePeriod->end_time;
       <div class="row">
          <div class="col-md-4 col-xs-6">
             <div class="section-title">
-               <h4 class="title">Top selling</h4>
+               <h4 class="title">Special Offer</h4>
                <div class="section-nav">
                   <div id="slick-nav-3" class="products-slick-nav"></div>
                </div>
             </div>
+            @php
+                $specialOfferProducts = App\Models\Product::where('status', 'active')
+                                       ->where('special_offer', 1)
+                                       ->orderBy('created_at', 'desc')
+                                       ->inRandomOrder()
+                                       ->limit(3)
+                                       ->get();
+
+                $special_offerAsc = App\Models\Product::where('status','active')
+                                    ->where('special_offer',1)
+                                    ->orderBy('created_at', 'asc')
+                                    ->inRandomOrder()
+                                    ->limit(3)
+                                    ->get();
+
+            @endphp
             <div class="products-widget-slick" data-nav="#slick-nav-3">
                <div>
+                  @foreach ($specialOfferProducts as $item)
                   <!-- product widget -->
+                      
                   <div class="product-widget">
                      <div class="product-img">
-                        <img src="./img/product07.png" alt="">
+                        <img src="{{asset($item->product_photo)}}" alt="">
                      </div>
                      <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
+                        <p class="product-category">{{$item->category->cat_name}}</p>
+                        <h3 class="product-name"><a href="{{url('/product/details/'.$item->id.'/'.$item->product_slug)}}">{{Str::limit($item->product_name,30,'...')}}</a></h3>
+                        @if ($item->product_discount)
+                        <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format(($item->product_price-$item->product_discount),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</del></h4>
+                        @else
+                        <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</h4>
+                        @endif
                      </div>
                   </div>
                   <!-- /product widget -->
-                  <!-- product widget -->
-                  <div class="product-widget">
-                     <div class="product-img">
-                        <img src="./img/product08.png" alt="">
-                     </div>
-                     <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                     </div>
-                  </div>
-                  <!-- /product widget -->
-                  <!-- product widget -->
-                  <div class="product-widget">
-                     <div class="product-img">
-                        <img src="./img/product09.png" alt="">
-                     </div>
-                     <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                     </div>
-                  </div>
-                  <!-- product widget -->
+                  @endforeach
+
                </div>
                <div>
+                  @foreach ($special_offerAsc as $item)
                   <!-- product widget -->
+                      
                   <div class="product-widget">
                      <div class="product-img">
-                        <img src="./img/product01.png" alt="">
+                        <img src="{{asset($item->product_photo)}}" alt="">
                      </div>
                      <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
+                        <p class="product-category">{{$item->category->cat_name}}</p>
+                        <h3 class="product-name"><a href="{{url('/product/details/'.$item->id.'/'.$item->product_slug)}}">{{Str::limit($item->product_name,30,'...')}}</a>h3>
+                        {{-- <h4 class="product-price">{!!$currency->currency_symbol!!} 980.00 <del class="product-old-price">$990.00</del></h4> --}}
+                        @if ($item->product_discount)
+                        <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format(($item->product_price-$item->product_discount),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</del></h4>
+                        @else
+                        <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</h4>
+                        @endif
                      </div>
                   </div>
                   <!-- /product widget -->
-                  <!-- product widget -->
-                  <div class="product-widget">
-                     <div class="product-img">
-                        <img src="./img/product02.png" alt="">
-                     </div>
-                     <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                     </div>
-                  </div>
-                  <!-- /product widget -->
-                  <!-- product widget -->
-                  <div class="product-widget">
-                     <div class="product-img">
-                        <img src="./img/product03.png" alt="">
-                     </div>
-                     <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                     </div>
-                  </div>
-                  <!-- product widget -->
+                  @endforeach
                </div>
             </div>
          </div>
@@ -569,167 +553,135 @@ $stopTime = $timePeriod->end_time;
             </div>
             <div class="products-widget-slick" data-nav="#slick-nav-4">
                <div>
+                  @php
+
+                     $topSellingProducts1 = App\Models\Product::withCount(['orderItems as total_sold' => function ($query) {
+                           $query->select(DB::raw('sum(qty)'));
+                        }])
+                        ->orderByDesc('total_sold')
+                        ->take(3)
+                        ->get();
+                        $topSellingProducts2 = App\Models\Product::withCount(['orderItems as total_sold' => function ($query) {
+                           $query->select(DB::raw('sum(qty)'));
+                        }])
+                        ->orderBy('total_sold')
+                        ->take(3)
+                        ->get();
+
+                     // $topSellingProducts = App\Models\Product::withCount('order_items')->take(5)->get();
+                  @endphp  
+
+                  @foreach ($topSellingProducts1 as $item)
                   <!-- product widget -->
+                      
                   <div class="product-widget">
                      <div class="product-img">
-                        <img src="./img/product04.png" alt="">
+                        <img src="{{asset($item->product_photo)}}" alt="">
                      </div>
                      <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
+                        <p class="product-category">{{$item->category->cat_name}}</p>
+                        <h3 class="product-name"><a href="{{url('/product/details/'.$item->id.'/'.$item->product_slug)}}">{{Str::limit($item->product_name,30,'...')}}</a></h3>
+                        {{-- <h4 class="product-price">{!!$currency->currency_symbol!!} 980.00 <del class="product-old-price">$990.00</del></h4> --}}
+                        @if ($item->product_discount)
+                        <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format(($item->product_price-$item->product_discount),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</del></h4>
+                        @else
+                        <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</h4>
+                        @endif
                      </div>
                   </div>
                   <!-- /product widget -->
-                  <!-- product widget -->
-                  <div class="product-widget">
-                     <div class="product-img">
-                        <img src="./img/product05.png" alt="">
-                     </div>
-                     <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                     </div>
-                  </div>
-                  <!-- /product widget -->
-                  <!-- product widget -->
-                  <div class="product-widget">
-                     <div class="product-img">
-                        <img src="./img/product06.png" alt="">
-                     </div>
-                     <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                     </div>
-                  </div>
-                  <!-- product widget -->
+                  @endforeach
+
+
+                  
                </div>
                <div>
+                  @foreach ($topSellingProducts2 as $item)
                   <!-- product widget -->
+                      
                   <div class="product-widget">
                      <div class="product-img">
-                        <img src="./img/product07.png" alt="">
+                        <img src="{{asset($item->product_photo)}}" alt="">
                      </div>
                      <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
+                        <p class="product-category">{{$item->category->cat_name}}</p>
+                        <h3 class="product-name"><a href="{{url('/product/details/'.$item->id.'/'.$item->product_slug)}}">{{Str::limit($item->product_name,30,'...')}}</a></h3>
+                        {{-- <h4 class="product-price">{!!$currency->currency_symbol!!} 980.00 <del class="product-old-price">$990.00</del></h4> --}}
+                        @if ($item->product_discount)
+                        <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format(($item->product_price-$item->product_discount),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</del></h4>
+                        @else
+                        <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</h4>
+                        @endif
                      </div>
                   </div>
                   <!-- /product widget -->
-                  <!-- product widget -->
-                  <div class="product-widget">
-                     <div class="product-img">
-                        <img src="./img/product08.png" alt="">
-                     </div>
-                     <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                     </div>
-                  </div>
-                  <!-- /product widget -->
-                  <!-- product widget -->
-                  <div class="product-widget">
-                     <div class="product-img">
-                        <img src="./img/product09.png" alt="">
-                     </div>
-                     <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                     </div>
-                  </div>
-                  <!-- product widget -->
+                  @endforeach
                </div>
             </div>
          </div>
          <div class="clearfix visible-sm visible-xs"></div>
          <div class="col-md-4 col-xs-6">
             <div class="section-title">
-               <h4 class="title">Top selling</h4>
+               <h4 class="title">New Product</h4>
                <div class="section-nav">
                   <div id="slick-nav-5" class="products-slick-nav"></div>
                </div>
             </div>
+            @php
+                $newProductsDes = App\Models\Product::where('status', 'active')
+               ->orderBy('created_at', 'desc')
+               ->limit(3)
+               ->get();
+               $newProductsAsc = App\Models\Product::where('status', 'active')
+               ->orderBy('created_at','desc')
+               ->skip(3)
+               ->take(3)
+               ->get();
+             @endphp
             <div class="products-widget-slick" data-nav="#slick-nav-5">
                <div>
+                  @foreach ($newProductsDes as $item)
                   <!-- product widget -->
+                      
                   <div class="product-widget">
                      <div class="product-img">
-                        <img src="./img/product01.png" alt="">
+                        <img src="{{asset($item->product_photo)}}" alt="">
                      </div>
                      <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
+                        <p class="product-category">{{$item->category->cat_name}}</p>
+                        <h3 class="product-name"><a href="{{url('/product/details/'.$item->id.'/'.$item->product_slug)}}">{{Str::limit($item->product_name,30,'...')}}</a></h3>
+                        {{-- <h4 class="product-price">{!!$currency->currency_symbol!!} 980.00 <del class="product-old-price">$990.00</del></h4> --}}
+                        @if ($item->product_discount)
+                        <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format(($item->product_price-$item->product_discount),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</del></h4>
+                        @else
+                        <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</h4>
+                        @endif
                      </div>
                   </div>
                   <!-- /product widget -->
-                  <!-- product widget -->
-                  <div class="product-widget">
-                     <div class="product-img">
-                        <img src="./img/product02.png" alt="">
-                     </div>
-                     <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                     </div>
-                  </div>
-                  <!-- /product widget -->
-                  <!-- product widget -->
-                  <div class="product-widget">
-                     <div class="product-img">
-                        <img src="./img/product03.png" alt="">
-                     </div>
-                     <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                     </div>
-                  </div>
-                  <!-- product widget -->
+                  @endforeach
                </div>
                <div>
+                  @foreach ($newProductsAsc as $item)
                   <!-- product widget -->
+                      
                   <div class="product-widget">
                      <div class="product-img">
-                        <img src="./img/product04.png" alt="">
+                        <img src="{{asset($item->product_photo)}}" alt="">
                      </div>
                      <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
+                        <p class="product-category">{{$item->category->cat_name}}</p>
+                        <h3 class="product-name"><a href="{{url('/product/details/'.$item->id.'/'.$item->product_slug)}}">{{Str::limit($item->product_name,30,'...')}}</a></h3>
+                        {{-- <h4 class="product-price">{!!$currency->currency_symbol!!} 980.00 <del class="product-old-price">$990.00</del></h4> --}}
+                        @if ($item->product_discount)
+                        <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format(($item->product_price-$item->product_discount),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</del></h4>
+                        @else
+                        <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</h4>
+                        @endif
                      </div>
                   </div>
                   <!-- /product widget -->
-                  <!-- product widget -->
-                  <div class="product-widget">
-                     <div class="product-img">
-                        <img src="./img/product05.png" alt="">
-                     </div>
-                     <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                     </div>
-                  </div>
-                  <!-- /product widget -->
-                  <!-- product widget -->
-                  <div class="product-widget">
-                     <div class="product-img">
-                        <img src="./img/product06.png" alt="">
-                     </div>
-                     <div class="product-body">
-                        <p class="product-category">Category</p>
-                        <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                        <h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-                     </div>
-                  </div>
-                  <!-- product widget -->
+                  @endforeach
                </div>
             </div>
          </div>

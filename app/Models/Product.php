@@ -18,5 +18,8 @@ class Product extends Model
         return $this->belongsTo(Brand::class,'brand_id','id');
     }//end method
 
-
+    public function orderItems()
+    {
+        return $this->hasMany(Order_item::class, 'product_id');
+    }
 }
