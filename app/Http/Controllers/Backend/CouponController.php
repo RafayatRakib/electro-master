@@ -26,35 +26,29 @@ class CouponController extends Controller
         // dd($request);
         $request->validate([
             'coupon' => 'required',
-            'coupon_amount' =>'required_without_all:coupon_percentage',
-            'coupon_percentage' =>'required_without_all:coupon_amount',
+            'discount_type' =>'required',
+            'discount' =>'required',
             'minimum_purchase' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
-            'category' => 'required',
             'restrictions' => 'required',
             'created_at' => Carbon::now(),
         ]);
 
-        if($request->coupon_amount){
-            $coupon_amount = $request->coupon_amount;
-        }
-        if($request->coupon_percentage){
-            $coupon_percentage = $request->coupon_percentage;
-        }
 
         DB::table('coupons')->insert([
             'coupon_code' => strtoupper($request->coupon),
-            'amount' => $coupon_amount??null,
-            'percentage' => $coupon_percentage?? null,
+            'discount_type' => $request->discount_type,
+            'discount' => $request->discount,
             'minimum_purchase' => $request->minimum_purchase,
             'start_date' => $request->start_date,
             'end_date' =>  $request->end_date,
-            'cat_id' => $request->category,
             'restrictions' => $request->restrictions,
         ]);
 
         session()->flash('success','Coupon added successfuly');
+        toast('Coupon added succesfully','success');
+        
         return redirect()->route('admin.all.coupon');
     }//end method
 
@@ -69,12 +63,11 @@ class CouponController extends Controller
 
         Coupon::findOrFail($request->id)->update([
             'coupon_code' => strtoupper($request->coupon),
-            'amount' => $request->coupon_amount??null,
-            'percentage' => $request->coupon_percentage?? null,
+            'discount_type' => $request->discount_type,
+            'discount' => $request->discount,
             'minimum_purchase' => $request->minimum_purchase,
             'start_date' => $request->start_date,
             'end_date' =>  $request->end_date,
-            'cat_id' => $request->category,
             'restrictions' => $request->restrictions,
         ]);
         session()->flash('success','Coupon update successfuly');

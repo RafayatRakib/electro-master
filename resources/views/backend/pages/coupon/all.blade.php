@@ -1,6 +1,9 @@
 @extends('backend.master')
 @section('title','All Coupon')
 @section('content')
+@php
+    $c = App\Models\Currency::where('status','active')->first();
+@endphp
     <div class="container">
         <div class="my-5">
             @if(session('success'))
@@ -14,13 +17,13 @@
                     <tr>
                       <th>SL</th>
                       <th>Coupon Code</th>
+                      <th>Type</th>
                       <th>Amount</th>
-                      <th>Percentage</th>
                       <th>Minimum Purchase</th>
                       <th>Start Date</th>
                       <th>End Date</th>
-                      <th>Category</th>
                       <th>Restriction</th>
+                      <th>Status</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -30,12 +33,11 @@
                     <tr>
                       <td>{{$key+1}}</td>
                       <td>  {{$item->coupon_code}} </td>
-                      <td>  {{$item->amount ?? 0}} </td>
-                      <td>  {{$item->percentage ?? 0}} </td>
+                      <td>  {{$item->discount_type}} </td>
+                      <td>  {{$item->discount_type=="cash"?$item->discount:$item->discount.'%'}} </td>
                       <td>  {{$item->minimum_purchase}} </td>
                       <td>  {{$item->start_date}} </td>
                       <td>  {{$item->end_date}} </td>
-                      <td>  {{$item->category->cat_name}} </td>
                       <td>  {{$item->restrictions }} times </td>
 
                       <td>
@@ -69,11 +71,13 @@
                       <tr>
                         <th>SL</th>
                         <th>Coupon Code</th>
+                        <th>Type</th>
                         <th>Amount</th>
-                        <th>Percentage</th>
                         <th>Minimum Purchase</th>
-                        <th>Category</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
                         <th>Restriction</th>
+                        <th>Status</th>
                         <th>Actions</th>
                       </tr>
                   </footer>

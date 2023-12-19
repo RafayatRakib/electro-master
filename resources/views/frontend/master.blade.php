@@ -30,6 +30,11 @@
  		{{-- <link type="text/css" rel="stylesheet" href="{{asset('frontend/css/bootstrap.min.css')}}"/> --}}
 
 		 {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
+		
+		<!-- ... other head elements ... -->
+		<link rel="stylesheet" href="{{ asset('vendor/sweetalert/sweetalert.css') }}">
+
+
 
 
     </head>
@@ -95,8 +100,9 @@
 						<!-- SEARCH BAR -->
 						<div class="col-md-6">
 							<div class="header-search">
-								<form>
-									<select class="input-select" style="width: 150px">
+								<form action="{{route('search')}}" method="GET">
+									@csrf
+									<select name="search_category" class="input-select" style="width: 150px">
 										<option value="0">All Categories</option>
                                         @php
                                             $cat =  App\Models\Category::where('status','1')->get();
@@ -105,7 +111,8 @@
 										<option  value="{{$item->id}}">{{$item->cat_name}}</option>
                                         @endforeach
 									</select>
-									<input class="input" placeholder="Search here">
+									{{-- <input class="input" name="search_input" placeholder="Search here" value="{{ old('search_input') }}"> --}}
+									<input class="input" name="search_input" value="{{session()->get('search_input')}}" placeholder="Search here">
 									<button class="search-btn">Search</button>
 								</form>
 							</div>
@@ -117,10 +124,13 @@
 							<div class="header-ctn">
 								<!-- Wishlist -->
 								<div>
-									<a href="#">
+									@php
+										$Wishlist = App\Models\Wishlist::where('user_id',Auth::id())->count();
+									@endphp
+									<a href="{{route('wishlist')}}">
 										<i class="fa fa-heart-o"></i>
 										<span>Your Wishlist</span>
-										<div class="qty">2</div>
+										<div class="qty">{{$Wishlist}}</div>
 									</a>
 								</div>
 								<!-- /Wishlist -->
@@ -328,11 +338,14 @@
 							<div class="footer">
 								<h3 class="footer-title">Categories</h3>
 								<ul class="footer-links">
-									<li><a href="#">Hot deals</a></li>
-									<li><a href="#">Laptops</a></li>
-									<li><a href="#">Smartphones</a></li>
-									<li><a href="#">Cameras</a></li>
-									<li><a href="#">Accessories</a></li>
+									@php
+										$categories = App\Models\Category::where('status',1)->inRandomOrder()->limit(5)->get();
+									@endphp
+									@foreach ($categories as $item)
+										
+									<li><a href="{{url('/category/all/product/'.$item->cat_slug)}}">{{$item->cat_name}}</a></li>
+									@endforeach
+
 								</ul>
 							</div>
 						</div>
@@ -342,12 +355,17 @@
 						<div class="col-md-3 col-xs-6">
 							<div class="footer">
 								<h3 class="footer-title">Information</h3>
+								@php
+									$page = App\Models\Pages::where('status','active')->get();
+								@endphp
 								<ul class="footer-links">
-									<li><a href="#">About Us</a></li>
-									<li><a href="#">Contact Us</a></li>
+									@foreach ($page as $item)
+										<li><a href="{{$item->slug}}">{{$item->title}}</a></li>
+									@endforeach
+									{{-- <li><a href="#">Contact Us</a></li>
 									<li><a href="#">Privacy Policy</a></li>
 									<li><a href="#">Orders and Returns</a></li>
-									<li><a href="#">Terms & Conditions</a></li>
+									<li><a href="#">Terms & Conditions</a></li> --}}
 								</ul>
 							</div>
 						</div>
@@ -356,10 +374,10 @@
 							<div class="footer">
 								<h3 class="footer-title">Service</h3>
 								<ul class="footer-links">
-									<li><a href="#">My Account</a></li>
-									<li><a href="#">View Cart</a></li>
-									<li><a href="#">Wishlist</a></li>
-									<li><a href="#">Track My Order</a></li>
+									<li><a href="{{route('dashboard')}}">My Account</a></li>
+									<li><a href="{{route('mycart')}}">View Cart</a></li>
+									<li><a href="{{route('wishlist')}}">Wishlist</a></li>
+									<li><a href="{{route('my_orders')}}">Track My Order</a></li>
 									<li><a href="#">Help</a></li>
 								</ul>
 							</div>
@@ -397,6 +415,7 @@
 			<!-- /bottom footer -->
 		</footer>
 		<!-- /FOOTER -->
+		
 
 		<!-- jQuery Plugins -->
 		<script src="{{asset('frontend/js/jquery.min.js')}}"></script>
@@ -406,7 +425,14 @@
 		<script src="{{asset('frontend/js/jquery.zoom.min.js')}}"></script>
 		<script src="{{asset('frontend/js/main.js')}}"></script>
 		{{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> --}}
- 
+		<script>
+
+			$.ajaxSetup({
+						headers: {
+							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+						}
+					});
+					</script>
 		<script>
 			(function (window, document) {
 				var loader = function () {
@@ -419,7 +445,11 @@
 			})(window, document);
 		</script>
 		
+		<script src="{{ asset('vendor/sweetalert/sweetalert.min.js') }}"></script>
+		@include('sweetalert::alert')
+
 		@yield('script')
+
 
 	</body>
 </html>

@@ -14,13 +14,12 @@ return new class extends Migration
         Schema::create('coupons', function (Blueprint $table) {
             $table->id();
             $table->string('coupon_code')->nullable();
-            $table->string('amount')->nullable();
-            $table->string('percentage')->nullable();
+            $table->enum('discount_type',['cash','percentage'])->nullable();
+            $table->string('discount')->nullable();
             $table->string('start_date')->nullable();
             $table->string('end_date')->nullable();
             $table->string('minimum_purchase')->nullable();
-            $table->unsignedBigInteger('cat_id')->nullable();
-            $table->string('restrictions')->nullable();
+            $table->string('restrictions')->default(1);
             $table->string('status')->default(1);
             $table->timestamps();
         });

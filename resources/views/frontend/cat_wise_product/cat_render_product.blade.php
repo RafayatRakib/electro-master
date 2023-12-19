@@ -3,7 +3,23 @@
    <div id="render_product">
 <input type="hidden" name="cat_id" value="{{$id}}" id="cat_id">
 <div style="margin-bottom: 5px!important">
+   @if ($category->cat_name)
    <h1>{{strtoupper($category->cat_name)}}</h1>
+   @endif
+   <h4>
+      {{-- {{ session()->get('search_input') }} --}}
+   @if (!$category->cat_name)
+       
+      @if(isset($product) && $product->count() > 0)
+      <p>{{ $product->count() }} items found for "<strong class="text-danger"> {{ session()->get('search_input') }} </strong>"</p>
+      @else
+      <p>No items found for " <strong class="text-danger"> {{ session()->get('search_input') }} </strong>"</p>
+      @endif
+   @else
+   @endif
+
+   
+   </h4>
    <hr style="border-bottom: 1px solid #dbdbdb">
 </div>
 @forelse ($product as $item)
@@ -53,7 +69,7 @@
         </div>
 </div>
 @empty
-    <h3>No product found</h3>
+      <h4>No items found</h4>
 @endforelse
 
 </div>
@@ -63,5 +79,5 @@
 
 <!-- store bottom filter -->
 <div class="store-filter clearfix">
-{{$product->links('vendor.pagination.frontend')}}
+{{-- {{$product->links('vendor.pagination.frontend')}} --}}
 </div>

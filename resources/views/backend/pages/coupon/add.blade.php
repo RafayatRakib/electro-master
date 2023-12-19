@@ -20,14 +20,19 @@
                     <input type="text" name="coupon" id="coupon" class="form-control @error('coupon')is-invalid @enderror" id="defaultFormControlInput" value="{{old('coupon')}}" placeholder="Ex: CRISMAS007" aria-describedby="defaultFormControlHelp">
                     @error('coupon') <strong class="text-danger">{{$message}}</strong> @enderror <br>
 
-                    <label for="defaultFormControlInput" class="form-label">Coupon Amount</label>
-                    <input type="number" name="coupon_amount" id="coupon_amount" class="form-control @error('coupon_amount')is-invalid @enderror" id="defaultFormControlInput" value="{{old('coupon_amount')}}" placeholder="Ex: 500" aria-describedby="defaultFormControlHelp">
-                    @error('coupon_amount') <strong class="text-danger">{{$message}}</strong> @enderror <br>
+                    <label for="defaultFormControlInput" class="form-label">Coupon Type</label>
+                    <select id="smallSelect" name="discount_type" class="form-select @error('discount_type')is-invalid @enderror">
+                        <option selected disabled>Select Type</option>
+                        <option value="cash">Cash</option>
+                        <option value="percentage">Percentage</option>
+                      </select>
+                   
+                    @error('discount_type') <strong class="text-danger">{{$message}}</strong> @enderror <br>
 
                     
-                    <label for="defaultFormControlInput" class="form-label">Coupon Percentage</label>
-                    <input type="number" name="coupon_percentage" id="coupon_percentage" class="form-control @error('coupon_percentage')is-invalid @enderror" id="defaultFormControlInput" value="{{old('coupon_percentage')}}" placeholder="Ex: 10%" aria-describedby="defaultFormControlHelp">
-                    @error('coupon_percentage') <strong class="text-danger">{{$message}}</strong> @enderror <br>
+                    <label for="defaultFormControlInput" class="form-label">Discount Amount</label>
+                    <input type="number" name="discount" id="discount" class="form-control @error('discount')is-invalid @enderror" id="defaultFormControlInput" value="{{old('discount')}}" placeholder="Ex: 10% or 100$" aria-describedby="defaultFormControlHelp">
+                    @error('discount') <strong class="text-danger">{{$message}}</strong> @enderror <br>
 
                     
                     <label for="defaultFormControlInput" class="form-label">Minimum Purchase</label>
@@ -42,14 +47,6 @@
                     <input type="datetime-local" name="end_date" id="end_date" class="form-control @error('end_date')is-invalid @enderror" id="defaultFormControlInput" value="{{old('end_date')}}" placeholder="Ex: 500" aria-describedby="defaultFormControlHelp">
                     @error('end_date') <strong class="text-danger">{{$message}}</strong> @enderror <br>
 
-                    <label for="defaultFormControlInput" class="form-label">Category</label>
-                    <select id="defaultSelect" name="category" class="form-select @error('category')is-invalid @enderror">
-                        <option disabled selected>Select Category</option>
-                        @foreach ($cat as $item)
-                        <option value="{{$item->id}}">{{$item->cat_name}}</option>
-                        @endforeach
-                    </select>
-                    @error('category') <strong class="text-danger">{{$message}}</strong> @enderror <br>
 
                     <label for="defaultFormControlInput" class="form-label">Restrictions</label>
                     <input type="number" min="1" name="restrictions" id="restrictions" class="form-control @error('restrictions')is-invalid @enderror" id="defaultFormControlInput" value="{{old('restrictions')}}" placeholder="Ex: one-time use" aria-describedby="defaultFormControlHelp">

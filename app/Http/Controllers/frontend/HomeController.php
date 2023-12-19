@@ -10,6 +10,7 @@ use App\Models\Currency;
 use App\Models\LogonAndName;
 use App\Models\Multi_photo;
 use App\Models\Order_item;
+use App\Models\Pages;
 use App\Models\Product;
 use App\Models\Review;
 use Illuminate\Http\Request;
@@ -85,4 +86,57 @@ class HomeController extends Controller
         return view('frontend.cat_wise_product.cat_render_product',compact('product','category','id'))->render();
 
     }//end method
+
+
+    public function search(Request $request){
+        // dd($request);
+
+        $searchInput = $request->input('search_input');
+        $categoryId = $request->input('search_category');
+    
+        $query = Product::query();
+    
+        if ($categoryId && $categoryId != 0) {
+            $query->where('cat_id', $categoryId);
+        }
+    
+        // if i use this method this way is this work:
+        if ($searchInput) {
+            $query->where(function ($q) use ($searchInput) {
+                $q->where('product_name', 'like', '%' . $searchInput . '%')
+                    ->orWhere('short_des', 'like', '%' . $searchInput . '%')
+                    ->orWhere('long_des', 'like', '%' . $searchInput . '%')
+                    ->orWhere('details', 'like', '%' . $searchInput . '%');
+            });
+        }
+        $results = $query->get();
+        // dd($results);
+
+        $product = $results;
+        $currency = Currency::where('status','active')->first();
+        $cat = Category::where('status',1)->inRandomOrder()->limit(10)->get();
+        $brand = Brand::where('status',1)->inRandomOrder()->limit(10)->get();
+        $id = null;
+        $request->session()->flash('search_input', $request->input('search_input'));
+        return view('frontend.search',compact('product','currency','cat','brand','id'));
+        
+
+    }//end method
+
+    // pages controller
+
+    public function pages($slug){
+        $page = Pages::where('slug',$slug)->where('status','active')->first();
+        if($page){
+            return view('frontend.pages.blank_pages',compact('page'));
+        }else{
+            return view('errors.404');
+
+        }
+    }//end method
+
+
+
+
+
 }

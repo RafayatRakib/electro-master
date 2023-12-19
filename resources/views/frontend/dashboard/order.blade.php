@@ -14,8 +14,11 @@
                                 <li class="dashboard-nav-item">
                                     <a class="nav-link active-nav" href="{{route('my_orders')}}" ><i class="fa fa-cart-arrow-down"></i> Orders</a>
                                 </li>
-                                <li class="dashboard-nav-item">
+                                {{-- <li class="dashboard-nav-item">
                                     <a class="nav-link" href=""><i class="fa fa-truck"></i> Track Your Order</a>
+                                </li> --}}
+                                <li class="dashboard-nav-item">
+                                    <a class="nav-link" href="{{route('my_return')}}"><i class="fa fa-undo"></i> My Return</a>
                                 </li>
                                 <li class="dashboard-nav-item">
                                     <a class="nav-link" href="{{route('user.address')}}"><i class="fa fa-map-marker"></i> My Address</a>

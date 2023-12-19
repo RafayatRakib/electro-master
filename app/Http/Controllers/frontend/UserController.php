@@ -8,8 +8,11 @@ use App\Jobs\UserRegistraisonJob;
 use Illuminate\Http\Request;
 use App\Mail\userRegistrationMail;
 use App\Models\Address;
+use App\Models\Currency;
 use App\Models\District;
 use App\Models\Division;
+use App\Models\Order;
+use App\Models\ProductReturn;
 use App\Models\Upazila;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -18,6 +21,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Mail;
 use Svg\Tag\Rect;
+use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
 
 class UserController extends Controller
 {
@@ -220,8 +225,69 @@ class UserController extends Controller
     }//end method
 
 
+    public function userAccount(){
+        $user = User::findOrFail(Auth::id());
+        $currency = Currency::where('status','active')->first();
+        $Order = Order::where('user_id',Auth::id())->get();
+        $return = ProductReturn::where('user_id',Auth::id())->get();
+        // dd($return);
+        $totalReturn = 0;
+        $totalOrder = 0;
+        $totalAmount = 0;
+        foreach($Order as $item){
+            $totalAmount += $item->total_amount-$item->total_discount;
+            $totalOrder+=1;
+        }
+        foreach($return as $item){
+            $totalReturn+=$item->amount;
+        }
+        
+        return view('frontend.dashboard.accountDetails',compact('user','currency','totalOrder','totalAmount','totalReturn'));
+    }//end method
 
 
+    public function userAccountUpdate(Request $request){
+        if($request->current_password){
+            $request->validate([
+                'name' => 'required',
+                'email' => 'required|email',
+                'phone' => 'required',
+                'current_password' => 'required_with:new_password|required_with:password_confirmation|current_password',
+                'new_password' => 'required_with:current_password|min:8|confirmed',
+                'photo' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+            ]);    
+        }else{
+
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'photo' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+    }
+    $user = User::findOrFail(Auth::id());
+    $user->name = $request->name??$user->name;
+    $user->phone = $request->phone??$user->phone;
+    $user->email  = $request->email ??$user->email ;
+    if($request->new_password){
+        $user->password = Hash::make($request->new_password);
+    }
+    if($request->gender){
+        $user->gender = $request->gender;
+    }
+    if($request->hasFile('photo')){
+        @unlink($user->photo);
+        $file = $request->file('photo');
+        $newName =  Str::uuid().'.'.$file->getClientOriginalExtension(); //uniqid() . '.' . $image->getClientOriginalExtension();
+        $path = public_path('uploads/user/'.$newName);
+        Image::make($file)->resize(600,600)->save($path);
+        $user->photo = 'uploads/user/'.$newName;
+    }
+    $user->update();
+    // $user->name = $request->name??$user->name;
+    session()->flash('success','Credentials updated!');
+    return redirect()->back();
+    }//end method
 
 
 }

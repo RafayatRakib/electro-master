@@ -1,6 +1,8 @@
 @extends('frontend.master')
 @section('title','Product Details')
 @section('content')
+
+
 <!-- SECTION -->
 <div class="section">
    <!-- container -->
@@ -48,18 +50,30 @@
                <h2 class="product-name"> {{$product->product_name}} </h2>
                <div>
                   <div class="product-rating">
-                     @for ($i = 0; $i < round($totalRating/$totalPerson); $i++)                                           
-                     <i class="fa fa-star"></i> 
-                     @endfor
-                     @for ($i = 0; $i < (5-round($totalRating/$totalPerson)); $i++)
-                     <i class="fa fa-star-o empty"></i>
-                     @endfor
+                  @if ($totalRating>0)
+                        @for ($i = 0; $i < round($totalRating/$totalPerson); $i++)                                           
+                        <i class="fa fa-star"></i> 
+                        @endfor
+                        @for ($i = 0; $i < (5-round($totalRating/$totalPerson)); $i++)
+                        <i class="fa fa-star-o empty"></i>
+                        @endfor
+                        @else
+                        @for ($i = 0; $i < 5; $i++)
+                        <i class="fa fa-star-o empty"></i>
+                        @endfor
+                        @endif
                   </div>
                   @if ($isPurches)
                   <a class="review-link" href="{{ route('rate',encrypt($product->id)) }}">{{$totalPerson}} Review(s) | Add your review</a>
                   @else
-                  <strong>{{$totalPerson}}Review(s)</strong> | Purches this item then you can review it.
+                  <strong>{{$totalPerson}} Review(s)</strong> | Purches this item then you can review it.
                   @endif
+                      
+                 
+
+                      
+                
+
                </div>
                <form action="{{route('addToCart')}}" method="post">
                   @csrf
@@ -69,14 +83,28 @@
                   <input type="hidden" name="currentUrl" value="{{$currentUrl}}">
                   <input type="hidden" name="product_id" value="{{encrypt($product->id)}}">
                   <div>
-                     {{-- 
-                     <h3 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h3>
-                     --}}
-                     @if ($product->product_discount)
-                     <h3 class="product-price">{!!$currency->currency_symbol!!}{{number_format(($product->product_price-$product->product_discount),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($product->product_price, 2, '.', ',')}}</del></h3>
+                  @php
+                      $flashSales = App\Models\FlashSalesProduct::where('product_id',$product->id)->first();                     
+                  @endphp
+                     @if ($flashSales)
+                     @if ($flashSales->flashsale->discount_type=='cash')
+                     <h3 class="product-price burned-text">{!!$currency->currency_symbol!!}{{number_format(($product->product_price-$flashSales->flashsale->discount > 0?$product->product_price-$flashSales->flashsale->discount:$product->product_price),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($product->product_price, 2, '.', ',')}}</del></h3>
+							    
                      @else
-                     <h3 class="product-price">{!!$currency->currency_symbol!!}{{number_format($product->product_price, 2, '.', ',')}}</h3>
+                         <h3 class="product-price burned-text">{!!$currency->currency_symbol!!}{{number_format(($product->product_price-($product->product_price*$flashSales->flashsale->discount/100)),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($product->product_price, 2, '.', ',')}}</del></h3>
                      @endif
+                        
+                     @else
+                        @if ($product->product_discount)
+                        <h3 class="product-price">{!!$currency->currency_symbol!!}{{number_format(($product->product_price-$product->product_discount),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($product->product_price, 2, '.', ',')}}</del></h3>
+                        @else
+                        <h3 class="product-price">{!!$currency->currency_symbol!!}{{number_format($product->product_price, 2, '.', ',')}}</h3>
+                        @endif
+
+                     @endif
+
+
+                     
                      @if ($product->qty >= 1)
                      <span class="product-available">In Stock</span>
                      @else
@@ -187,6 +215,9 @@
                         <div class="col-md-3">
                            <div id="rating">
                               <div class="rating-avg">
+                                 @if ($totalRating>0)
+                                     
+                                 
                                  <span> {{round($totalRating/$totalPerson,1)}} </span>
                                  <div class="rating-stars">
                                     @for ($i = 0; $i < round($totalRating/$totalPerson); $i++)                                           
@@ -196,6 +227,15 @@
                                     <i class="fa fa-star-o empty"></i>
                                     @endfor
                                  </div>
+
+                                 @else
+                                 <span> 0 </span>
+                                 <div class="rating-stars">
+                                    @for ($i = 0; $i < 5; $i++)
+                                    <i class="fa fa-star-o empty"></i>
+                                    @endfor
+                                 </div>
+                                 @endif
                               </div>
                               <ul class="rating">
                                  <li>
@@ -207,7 +247,11 @@
                                        <i class="fa fa-star"></i>
                                     </div>
                                     <div class="rating-progress">
-                                       <div style="width: {{($five / $totalReviews) * 100}}%;"></div>
+                                       @if ($totalRating>0)
+                                       <div style="width: {{($five / $totalReviews) * 100}}%;"></div>                                           
+                                       @else
+                                           
+                                       @endif
                                     </div>
                                     <span class="sum">{{$five}}</span>
                                  </li>
@@ -220,7 +264,13 @@
                                        <i class="fa fa-star-o"></i>
                                     </div>
                                     <div class="rating-progress">
+                                       @if ($totalRating>0)
+                                       
                                        <div style="width: {{($four / $totalReviews) * 100}}%;"></div>
+                                       @else
+                                           
+                                       @endif
+
                                     </div>
                                     <span class="sum">{{$four}}</span>
                                  </li>
@@ -233,7 +283,12 @@
                                        <i class="fa fa-star-o"></i>
                                     </div>
                                     <div class="rating-progress">
+                                       @if ($totalRating>0)
+                                           
                                        <div style="width: {{($three / $totalReviews) * 100}}%;"></div>
+                                       @else
+                                           
+                                       @endif
                                     </div>
                                     <span class="sum">{{$three}}</span>
                                  </li>
@@ -246,7 +301,12 @@
                                        <i class="fa fa-star-o"></i>
                                     </div>
                                     <div class="rating-progress">
+                                       @if ($totalRating>0)
                                        <div style="width: {{($two / $totalReviews) * 100}}%;"></div>
+                                      
+                                       @else
+                                           
+                                       @endif
                                     </div>
                                     <span class="sum">{{$two}}</span>
                                  </li>
@@ -259,7 +319,13 @@
                                        <i class="fa fa-star-o"></i>
                                     </div>
                                     <div class="rating-progress">
+                                       @if ($totalRating>0)
                                        <div style="width: {{($one / $totalReviews) * 100}}%;"></div>
+                                       
+                                       @else
+                                           
+                                       @endif
+
                                     </div>
                                     <span class="sum">{{$one}}</span>
                                  </li>
@@ -328,6 +394,8 @@
                         </div>
                         <!-- /Reviews -->
                         <!-- Review Form -->
+                        @if (Auth::id())
+                            
                         <div class="col-md-3">
                            <div id="review-form">
                               <form class="review-form" method="post" action="{{route('store.review')}}" enctype="multipart/form-data">
@@ -353,6 +421,8 @@
                               </form>
                            </div>
                         </div>
+                        @endif
+
                         <!-- /Review Form -->
                      </div>
                   </div>

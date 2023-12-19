@@ -48,7 +48,8 @@
     <link rel="stylesheet" href="{{asset('backend/assets/vendor/libs/apex-charts/apex-charts.css')}}" />
 
     <!-- Page CSS -->
-
+ <!-- UniIcon CDN Link  -->
+ <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
     {{-- tag inputs --}}
     {{-- <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.css"> --}}

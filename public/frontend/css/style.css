@@ -979,9 +979,28 @@ textarea.input {
   transition: 0.2s all;
 }
 
+.product .product-body .product-btns>a {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  background: transparent;
+  font-size: 2rem;
+  border: none;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
 .product .product-body .product-btns>button:hover {
   background-color: #E4E7ED;
   color: #D10024;
+  border-radius: 50%;
+}
+
+.product .product-body .product-btns>a:hover {
+  background-color: #E4E7ED;
+  color: #D10024;
+  font-size: 2.2rem;
   border-radius: 50%;
 }
 
@@ -1006,6 +1025,28 @@ textarea.input {
   transition: 0.2s all;
 }
 
+.product .product-body .product-btns>a .tooltipp {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -15px);
+  -ms-transform: translate(-50%, -15px);
+  transform: translate(-50%, -15px);
+  width: 150px;
+  padding: 10px;
+  font-size: 12px;
+  line-height: 10px;
+  background: #1e1f29;
+  color: #FFF;
+  text-transform: uppercase;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+
 .product .product-body .product-btns>button:hover .tooltipp {
   opacity: 1;
   visibility: visible;
@@ -1013,6 +1054,15 @@ textarea.input {
   -ms-transform: translate(-50%, -5px);
   transform: translate(-50%, -5px);
 }
+
+.product .product-body .product-btns>a:hover .tooltipp {
+  opacity: 1;
+  visibility: visible;
+  -webkit-transform: translate(-50%, -5px);
+  -ms-transform: translate(-50%, -5px);
+  transform: translate(-50%, -5px);
+}
+
 
 .product .add-to-cart {
   position: absolute;
@@ -2189,8 +2239,10 @@ textarea.input {
   }
 }
 .btn {
-  height: 40px;
-  width: 100px;
+  /* height: 40px; */
+  height: auto;
+  /* width: 100px; */
+  width: auto;
   background: #D10024;
   color: #FFF;
   font-weight: 700;
@@ -2456,3 +2508,210 @@ mx-5 {
     .zoom-image:hover {
     transform: scale(2.2); /* Scale the image to 120% of its original size */
     }
+
+
+    .burned-text {
+      color: #000; /* Black color */
+      text-shadow:
+          0 0 5px #fff, /* White shadow */
+          0 0 10px #ff792c, /* Orange shadow */
+          0 0 15px #ff5f00, /* Orange shadow */
+          0 0 20px #ff5f00, /* Orange shadow */
+          0 0 30px #ff5f00, /* Orange shadow */
+          0 0 40px #ff5f00; /* Orange shadow */
+  }
+
+
+  /* Example of .is-invalid styling */
+.is-invalid {
+  border: 1px solid #dc3545; /* Red border */
+}
+
+/* Additional styles to indicate the invalid state, such as background color or text color */
+.is-invalid::placeholder {
+  color: #dc3545; /* Red text color for placeholder */
+}
+
+.is-invalid::-webkit-input-placeholder {
+  color: #dc3545; /* Red text color for WebKit browsers */
+}
+
+/* You can add more styles as needed to highlight the invalid state */
+
+
+  
+#tracker_view ul{
+    display: flex;
+    margin-top: 80px;
+}
+#tracker_view ul li{
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+ul li .icon{
+    font-size: 35px;
+    /* color: #ff4732; */
+    color: #D10024;
+    margin: 0 60px;
+}
+ul li .text{
+    font-size: 14px;
+    font-weight: 600;
+    /* color: #ff4732; */
+    color: #D10024;
+}
+
+/* Progress Div Css  */
+
+ul li .progress{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(68, 68, 68, 0.781);
+    margin: 14px 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    position: relative;
+    cursor: pointer;
+}
+.progress::after{
+    content: " ";
+    position: absolute;
+    width: 125px;
+    height: 5px;
+    background-color: rgba(68, 68, 68, 0.781);
+    right: 30px;
+}
+
+
+.one::after{
+    width: 0;
+    height: 0;
+}
+ul li .progress .uil{
+    display: none;
+}
+ul li .progress p{
+    font-size: 13px;
+}
+
+/* Active Css  */
+
+ul li .active{
+    /* background-color: #ff4732; */
+    background-color: #D10024;
+    display: grid;
+    place-items: center;
+}
+li .active::after{
+    /* background-color: #ff4732; */
+    background-color: #D10024;
+
+}
+ul li .active p{
+    display: none;
+}
+ul li .active .uil{
+    font-size: 20px;
+    display: flex;
+}
+
+/* Responsive Css  */
+
+@media (max-width: 980px) {
+    ul{
+        flex-direction: column;
+    }
+    ul li{
+        flex-direction: row;
+    }
+    ul li .progress{
+        margin: 0 30px;
+    }
+    .progress::after{
+    content: " " !important;
+    position: absolute !important;
+    width: 125px !important;
+    height: 5px !important;
+    background-color: rgba(68, 68, 68, 0.781) !important;
+    left: 30px !important;
+}
+.one::after{
+    width: 0;
+    height: 0;
+}
+    ul li .icon{
+        margin: 15px 0;
+    }
+}
+
+@media (max-width:600px) {
+    .head .head_1{
+        font-size: 24px;
+    }
+    .head .head_2{
+        font-size: 16px;
+    }
+}
+
+
+/* // rounded circle */
+
+.rounded-circle {
+  border-radius: 50%!important;
+}
+.flex-column {
+  flex-direction: column!important;
+}
+
+
+.text-center {
+  text-align: center!important;
+}
+.align-items-center {
+  align-items: center!important;
+}
+.flex-column {
+  flex-direction: column!important;
+}
+.d-flex {
+  display: flex!important;
+}
+
+*, ::after, ::before {
+  box-sizing: border-box;
+}
+
+
+.alert {
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+
+.alert-warning {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+}
+
+.alert-dismissible {
+  position: relative;
+  padding-right: 2.5rem;
+  color: inherit;
+}
+
+.fade {
+  transition: opacity 0.15s linear;
+  transition-property: opacity;
+}
+
+.show {
+  display: block!important;
+  opacity: 1;
+}

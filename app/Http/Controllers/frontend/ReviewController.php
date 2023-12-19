@@ -45,7 +45,8 @@ class ReviewController extends Controller
                 }
             }
         
-        session()->flash('success','Review added successfuly!');
+        toast('Review added successfuly!','success');        
+        
         return redirect()->back();
 
     }//end method
@@ -89,8 +90,7 @@ class ReviewController extends Controller
                     $review_img->save();
                 }
             }
-        
-        session()->flash('success','Review added successfuly!');
+            toast('Review added successfuly!','success');        
         return redirect()->route('rate',encrypt($review->product_id));
     }//end method
 
@@ -108,7 +108,8 @@ class ReviewController extends Controller
         $review = Review::findOrFail($id);
         $review->delete(); // Delete the review itself
 
-        session()->flash('success','Review deleted successfuly!');
+        toast('Review deleted successfuly!','success');
+
         return redirect()->back();
 
     }//end method

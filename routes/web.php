@@ -22,6 +22,7 @@ use App\Http\Controllers\frontend\HomeController;
 use App\Http\Controllers\frontend\ReviewController;
 use App\Http\Controllers\frontend\UserController;
 use App\Http\Controllers\frontend\UserDashboardController;
+use App\Http\Controllers\frontend\WishlistController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SslCommerzPaymentController;
 use App\Http\Middleware\Role;
@@ -250,7 +251,9 @@ Route::middleware(['auth','role:admin'])->group(function(){
 //====================================================================================================================
 
 
-
+Route::get('/test',function(){
+    return view('frontend.test');
+});
 
 
 // frontend route start
@@ -262,6 +265,8 @@ Route::controller(HomeController::class)->group(function(){
     Route::get('/serach/product/by/ajax/category','cat_wiseProduct_search')->name('cat_wise.product.search');
     Route::get('/serach/rendering_cat_wiseProduct','rendering_cat_wiseProduct')->name('rendering_cat_wiseProduct');
     Route::get('/serach/product/by/ajax/brand','brand_wiseProduct_search')->name('brand_wise.product.search');
+
+    Route::get('/search','search')->name('search');
 });
 
 Route::controller(UserController::class)->group(function(){
@@ -270,6 +275,10 @@ Route::controller(UserController::class)->group(function(){
     Route::get('/login','userLogin')->name('userLogin');
     Route::post('/login','userLoginStore')->name('userLoginStore');
     // Route::get('/logout','logout')->name('logout');
+    Route::middleware(['auth','role:user'])->group(function(){
+        Route::get('/my/account','userAccount')->name('user.account');
+        Route::post('/my/account/update','userAccountUpdate')->name('user.account.update');
+    });
 });
 
 Route::post('/add/to/cart',[CartController::class,'addToCart'])->name('addToCart');
@@ -292,14 +301,19 @@ Route::middleware(['auth','role:user'])->group(function(){
             Route::get('/dashboard','dashboard')->name('dashboard');
 
             Route::get('/address','userAddress')->name('user.address');
+
+            Route::get('/my/return','my_return')->name('my_return');
+            Route::get('/return/details/{id}','return_details')->name('return_details');
         });
         
     //cart route start
     Route::controller(CartController::class)->group(function(){
         Route::get('/cart','mycart')->name('mycart');
         Route::get('/get_cart_data','get_cart_data')->name('get_cart_data');
-        Route::get('/cart_item_delete','cart_item_delete')->name('cart_item_delete');
+        Route::get('/cart_item_delete/{id}','cart_item_delete')->name('cart_item_delete');
         Route::get('/get/cart/item/price','itemWisePrice');
+        Route::post('/apply/coupon','AppliyedCoupon');
+        Route::get('/remove/coupon','couponRemove');
 
         Route::get('/my/orders','my_orders')->name('my_orders');
         Route::get('/order/details/{id}','order_details')->name('order_details');
@@ -326,9 +340,17 @@ Route::middleware(['auth','role:user'])->group(function(){
         Route::get('/delete/review/{id}','deleteReview')->name('delete.review');
     });
 
+    Route::controller(WishlistController::class)->group(function(){
+        Route::get('/wishlist','wishlist')->name('wishlist');
+        Route::get('/add/wishlist/{id}','addWishlist')->name('add.wishlist');
+
+    });
+
 
 });
 
+
+Route::get('/{slug}',[HomeController::class,'pages'])->name('pages');
 
 
 

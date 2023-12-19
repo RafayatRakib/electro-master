@@ -19,7 +19,7 @@
       <div id="review-form">
          <form class="review-form" method="post" action="{{route('store.review')}}" enctype="multipart/form-data">
             @csrf
-            <p>Dear <strong>{{Auth::user()->name}}</strong>, <br> write your experience in your comment box bleow adn give rating.</p>
+            <p>Dear <strong>{{Auth::user()->name}}</strong>, <br> write your experience in your comment box bleow and give rating.</p>
             <textarea class="input" name="comment" placeholder="Your Review (Optional)"></textarea>
             <input class="input" type="file" multiple name="review_img[]" placeholder="Optional">
             <input type="hidden" name="product_id" value="{{$product->id}}">

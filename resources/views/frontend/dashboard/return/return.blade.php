@@ -50,7 +50,7 @@
 
         <div class="col-md-6">
             <h2>Select a Return Reason</h2>
-            <form action="/submit-return" method="POST" enctype="multipart/form-data">
+            <form action="{{route('submit.return')}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
                     <label for="returnReason">Reason for Return:</label>
@@ -61,8 +61,8 @@
                        @endforeach
                     </select>
                @error('returnReason') <strong class="text-danger">{{$message}}</strong> @enderror 
-
-                </div>
+                    
+            </div>
                 <div class="form-group">
                     <label for="additionalComments">Comments:</label>
                     <textarea id="additionalComments" name="comments" rows="4" max-rows="4" class="form-control"></textarea>
@@ -73,6 +73,8 @@
                     @error('return_images') <strong class="text-danger">{{$message}}</strong> @enderror 
                     <input type="hidden" name="order_id" value="{{$order->id}}">
                     <input type="hidden" name="product_id" value="{{$product->id}}">
+                    <input type="hidden" name="color" value="{{$product->color}}">
+                    <input type="hidden" name="size" value="{{$product->size}}">
                 </div>
                 <button type="submit" class="btn">Submit</button>
             </form>

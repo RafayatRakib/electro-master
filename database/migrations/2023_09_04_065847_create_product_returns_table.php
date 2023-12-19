@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('user_id')->nullable();
             $table->string('order_id')->nullable();
             $table->string('product_id')->nullable();
+            $table->string('amount')->nullable();
             $table->string('return_reson_id')->nullable();
             $table->string('user_note')->nullable();
             $table->string('admin_note')->nullable();

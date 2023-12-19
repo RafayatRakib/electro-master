@@ -55,6 +55,8 @@ class OrderController extends Controller
             if($order->status == 'processing'){
                 $order->confirmed_date = Carbon::now();
                 $order->status = 'confirmed';
+                $order->confirmed_date = Carbon::now();
+                $order->processing_date = Carbon::now();
                 $order->update();
 
                 dispatch(new AdminOrderConfirmedJob($order,$currency));
@@ -90,6 +92,7 @@ class OrderController extends Controller
                     $order->picked_date = Carbon::now();
                 }
                 $order->shipped_date = Carbon::now();
+                
                 $order->status = 'shiped';
                 $order->update();
                 dispatch(new AdminOrderShipdeJob($order));

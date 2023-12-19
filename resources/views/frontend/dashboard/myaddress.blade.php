@@ -24,14 +24,17 @@
                                 <li class="dashboard-nav-item">
                                     <a class="nav-link " href="" ><i class="fa fa-cart-arrow-down"></i> Orders</a>
                                 </li>
-                                <li class="dashboard-nav-item">
+                                {{-- <li class="dashboard-nav-item">
                                     <a class="nav-link " href=""><i class="fa fa-truck"></i> Track Your Order</a>
+                                </li> --}}
+                                <li class="dashboard-nav-item">
+                                    <a class="nav-link" href="{{route('my_return')}}"><i class="fa fa-undo"></i> My Return</a>
                                 </li>
                                 <li class="dashboard-nav-item">
-                                    <a class="nav-link active-nav" href=""><i class="fa fa-map-marker"></i> My Address</a>
+                                    <a class="nav-link active-nav" href="{{route('user.address')}}"><i class="fa fa-map-marker"></i> My Address</a>
                                 </li>
                                 <li class="dashboard-nav-item">
-                                    <a class="nav-link" href=""><i class="fa fa-user"></i> Account details</a>
+                                    <a class="nav-link" href="{{route('user.account')}}"><i class="fa fa-user"></i> Account details</a>
                                 </li>
                                 <li class="dashboard-nav-item">
                                     <a class="nav-link" href="{{route('logout')}}"><i class="fa fa-sign-out"></i> Logout</a>

@@ -7,7 +7,11 @@ use App\Jobs\OrderConfirmationJob;
 use App\Mail\OrderConfirmationMail;
 use App\Models\Address;
 use App\Models\Cart;
+use App\Models\Coupon;
+use App\Models\CouponUser;
 use App\Models\Currency;
+use App\Models\FlashSales;
+use App\Models\FlashSalesProduct;
 use App\Models\Order;
 use App\Models\Order_item;
 use App\Models\Product;
@@ -28,13 +32,6 @@ class CartController extends Controller
     public function addToCart(Request $request){
         $url = $request->currentUrl;
         if(!Auth::user()){
-            // dd($url);
-            // if(session()->get('back_url') == $url){
-            //     return redirect()->route('userLogin');
-            // }else{
-            //     session()->put('back_url',$url);
-            //     return redirect()->route('userLogin');
-            // }
             session()->put('back_url',$url);
             return redirect()->route('userLogin');
         }
@@ -146,10 +143,7 @@ class CartController extends Controller
         $msg = 'New item added to the cart';
         $cart->save();
     }
-    // if(session()->get('back_url')){
-    //     session()->delete('back_url');
-    // }
-        session()->flash('success',$msg);
+        toast($msg,'success');
         return redirect()->back();
     }//end method
 
@@ -164,9 +158,12 @@ class CartController extends Controller
         return response()->json(['cart'=> $cart, 'cartItem'=>$Cartitem,'currency'=>$currency]);
     }//end method
 
-    public function cart_item_delete(Request $request){
-        // $cart = Cart::findOrFail($request->id)->delete();
-        return response()->json(['response'=> 'Item Removed']);
+    public function cart_item_delete($id){
+        $id = decrypt($id);
+        $cart = Cart::findOrFail($id)->delete();
+
+        toast('Cart item removed','info');
+        return redirect()->back();
     }//end method
 
     // public function itemWisePrice(Request $request){
@@ -190,26 +187,50 @@ class CartController extends Controller
 
 
     public function itemWisePrice(Request $request){
+        
         try {
             $totalAmount = 0;
             $totalDlevery = 0;
             $totalDiscount = 0;
-
             foreach ($request->id as $id) {
                 $cart = Cart::findOrFail($id);
                 $product = Product::findOrFail($cart->product_id);
+                $flashSales = FlashSalesProduct::where('product_id',$cart->product_id)->first();
                 $address = Address::where('status', 'active')->first();
-                $discount = $product->product_discount ?? 0;
-                $price = $product->product_price - $discount;
-                $totalAmount += $price * $cart->qty; 
-                $totalDlevery += $address->district->delivery_charge * $cart->qty;
-                $totalDiscount += $discount * $cart->qty;
+                
+                if (!empty($flashSales)) {
+                    if($flashSales->flashsale->end_time >= Carbon::now()){
+                        if($flashSales->flashsale->discount_type == 'percentage'){
+                        $discount = ($flashSales->product->product_price/100*$flashSales->flashsale->discount);
+                        $price = $flashSales->product->product_price - $discount;
+                        $totalAmount += $price * $cart->qty; 
+                        $totalDlevery += $address->district->delivery_charge * $cart->qty;
+                        $totalDiscount += $discount * $cart->qty;
+                        
+                        }else{
+                            $discount = $flashSales->flashsale->discount;
+                            $price = $flashSales->product->product_price - $discount;
+                            $totalAmount += $price * $cart->qty; 
+                            $totalDlevery += $address->district->delivery_charge * $cart->qty;
+                            $totalDiscount += $discount * $cart->qty;
+                        }
+                    
+                    }
+                }else{
+                    $discount = $product->product_discount ?? 0;
+                    $price = $product->product_price - $discount;
+                    $totalAmount += $price * $cart->qty; 
+                    $totalDlevery += $address->district->delivery_charge * $cart->qty;
+                    $totalDiscount += $discount * $cart->qty;
+                }
+               
             }
-    
+
             return response()->json([
                 'totalAmount' => $totalAmount,
                 'totalDlevery' => $totalDlevery,
                 'totalDiscount' => $totalDiscount,
+                'GrandTotal' =>($totalAmount + $totalDlevery - $totalDiscount),
                 'currency' => Currency::where('status','active')->first()
             ]);
         } catch (\Exception $e) {
@@ -217,11 +238,73 @@ class CartController extends Controller
             return response()->json(['error' => 'An error occurred.'], 500);
         }
     }
+
+
+    public function AppliyedCoupon(Request $request){
+//dd($request);
+        if(session()->get('coupon')){
+            toast('Coupon already applied','success');
+            return redirect()->back();
+            // return response()->json(['msg' => 'Coupon already applied']);
+        }
+
+        $coupon = Coupon::where('coupon_code', $request->coupon)->first();
+        if (!$coupon) {
+            toast('Invalid Coupon','error');
+            return redirect()->back();
+            // return response()->json(['msg' => 'Invalid Coupon']);
+        }
+        $ifusedAlready = CouponUser::where('user_id', Auth::id())->where('coupon_id', $coupon->id)->count();
+
+        if($coupon->minimum_purchase > $request->totalAmount){
+            $msg = 'Minimum'. $coupon->minimum_purchase .'amount need to applied this coupopn';
+            // return response()->json(['msg' => $msg]);
+            toast($msg,'worning');
+            return redirect()->back();
+        }
+    
+        $discount = 0;
+        $msg = '';
+    
+        if ($coupon->end_date >= Carbon::now() && $ifusedAlready < $coupon->restrictions) {
+            if ($coupon->discount_type == 'cash') {
+                $discount = $coupon->discount;
+            } else {
+                $discount = $request->totalAmount / 100 * $coupon->discount;
+            }
+            session()->put('coupon',['coupon' => $request->coupon, 'discount_type'=>$coupon->discount_type,'discount'=>$discount,'minimum_amount'=>$coupon->minimum_purchase]);
+            $msg = 'Coupon applied successfully';
+        } else {
+            $msg = 'Coupon already applied or invalid';
+        }
+        toast($msg,'worning');
+        return redirect()->back();
+        // return response()->json(['discount' => $discount, 'discountAmount' => $discountAmount, 'message' => $msg]);
+    }//end method
+    
+    public function couponRemove(){
+        if(session()->get('coupon')){
+            session()->forget('coupon');
+        }
+        toast('Coupon removed successfuly','info');
+        return redirect()->back();
+        // return response()->json(['msg'=>'Coupon removed successfuly']);
+    }//end method
+    
     
     public function checkout(Request $request){
         $request->validate([
             'payment' => 'required'
         ]);
+        // dd($request->totalAmount);
+        if (session()->has('coupon')) {
+            $coupon = session()->get('coupon');
+            
+            if ($coupon['minimum_amount'] > $request->totalAmount) {
+            session()->forget('coupon');
+            }
+        }
+        
         $totalAmount = $request->totalAmount;
         $totalDlevery = $request->totalDlevery;
         $cartData = $request->cartcheckbox;
@@ -237,7 +320,7 @@ class CartController extends Controller
         }
         // dd($orderItem);
 
-        session()->put([
+        session()->put('amount',[
             
             'totalAmount' => $totalAmount,
             'totalDlevery' => $totalDlevery,
@@ -319,7 +402,7 @@ class CartController extends Controller
         // Mail::to($maildata['email'])->send(new OrderConfirmationMail($maildata));
 
         dispatch(new OrderConfirmationJob($maildata));
-        session()->flash('success','Order succesfully placed');
+        toast('Order succesfully placed','success');
         return redirect()->route('dashboard');
 
     }//end method
@@ -329,14 +412,11 @@ class CartController extends Controller
 
     //amar pay payment start
 
-
     public function success(Request $request){
         // dd(session()->get('orderItem'));
         // dd($request);
 
         $cart = explode(",", $request->opt_a);
-
-        // dd($cart);
 
         $address = Address::where('user_id',Auth::id())->first();
         $currency = Currency::where('status','active')->first();
@@ -393,17 +473,27 @@ class CartController extends Controller
         // Mail::to($maildata['email'])->send(new OrderConfirmationMail($maildata));
 
         dispatch(new OrderConfirmationJob($maildata));
-
-        session()->flash('success','Order succesfully placed');
+        toast('Order succesfully placed','success');
         return redirect()->route('dashboard');
     }
-
+    
     public function fail(Request $request){
-        return $request;
+        if (session()->has('coupon') || session()->has('amount')) {
+            session()->forget('coupon');
+            session()->forget('amount');
+        }
+        toast('Somthing wrong, Payment dose not success','error');
+        // session()->flash('success','Somthing wrong, Payment dose not success');
+        return redirect()->route('mycart');
     }
 
     public function cancel(){
-        return 'Canceled';
+        if (session()->has('coupon') ) {
+            session()->forget('coupon');
+            // session()->forget('amount');
+        }
+        toast(' Payment canceled','warning');
+        return redirect()->route('mycart');
     }
 
     //aamar pay payment end
@@ -445,7 +535,7 @@ class CartController extends Controller
         $product = Product::findOrFail(decrypt($pid));
         $order = Order::findOrFail(decrypt($oid));
         $returnReson = ReturnReson::where('status','active')->get();
-        return view('frontend.dashboard.return',compact('product','order','returnReson'));
+        return view('frontend.dashboard.return.return',compact('product','order','returnReson'));
 
     }//end method
 
@@ -456,10 +546,29 @@ class CartController extends Controller
             'return_images'=> 'required',
         ]);
 
+    $query = Order_item::where('user_id', Auth::id())
+    ->where('order_id', $request->order_id)
+    ->where('product_id', $request->product_id);
+
+    if ($request->size && $request->color) {
+        $returnAmount = $query->where('color', $request->color)
+            ->where('size', $request->size)
+            ->first();
+    } elseif ($request->size) {
+        $returnAmount = $query->where('size', $request->size)
+            ->first();
+    } elseif ($request->color) {
+        $returnAmount = $query->where('color', $request->color)
+            ->first();
+    } else {
+        $returnAmount = $query->first();
+    }
+
         $return = new ProductReturn();
         $return->user_id = Auth::id();
         $return->order_id = $request->order_id;
         $return->product_id = $request->product_id;
+        $return->amount = $returnAmount->price*$returnAmount->qty;
         $return->return_reson_id = $request->returnReason;
         $return->user_note = $request->comments??null;
         $return->process_date = Carbon::now();
@@ -489,14 +598,15 @@ class CartController extends Controller
                     }
                 } else {
                     // Handle invalid files, if any
-                    session()->flash('success','Invalid file uploaded.!');
+                    toast('Invalid file uploaded.!','error');
                     return redirect()->back();
                 }
             }
         
         
         }
-        session()->flash('success','Return request added successfuly!');
+        toast('Return request added successfuly!','success');
+
         return redirect()->back();
 
     }//end method
