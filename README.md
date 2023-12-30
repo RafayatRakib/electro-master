@@ -22,6 +22,7 @@ http://127.0.0.1:8000/
 php artisan queue:work
 
 If you like our project please leave a star ❤
+<h3>Email: rakibh666@outlook.com or rakibh9494@gmail.com</h3>
 
 <h1> Backend part </h1>
 
