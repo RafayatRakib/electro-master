@@ -12,14 +12,6 @@ $stopTime = $timePeriod->end_time;
 <div class="section">
    <!-- container -->
    <div class="container">
-      <!-- row -->
-      <!-- In your Blade file -->
-{{-- @if(session()->has('swal'))
-<div class="alert alert-{{ session('swal.type') }}">
-    <strong>{{ session('swal.title') }}</strong> {{ session('swal.text') }}
-</div>
-@endif --}}
-
       <div class="row">
          <!-- shop -->
          @php
@@ -40,7 +32,6 @@ $stopTime = $timePeriod->end_time;
             </a>
          </div>
          @endforeach
-
          <!-- /shop -->
       </div>
       <!-- /row -->
@@ -48,13 +39,12 @@ $stopTime = $timePeriod->end_time;
    <!-- /container -->
 </div>
 <!-- /SECTION -->
-
 <!-- SECTION -->
-<div class="section">
+@if ($timePeriod->end_time > \Carbon\Carbon::now())          
+<div id="hot-deal" style="background-image: url({{asset($timePeriod->bg_photo??'')}})" class="section">
    <!-- container -->
    <div class="container">
       <!-- row -->
-      @if ($timePeriod->end_time > \Carbon\Carbon::now())          
       <div class="row">
          <!-- section title -->
          <div class="col-md-12">
@@ -102,79 +92,101 @@ $stopTime = $timePeriod->end_time;
          <!-- /section title -->
          <!-- Products tab & slick -->
          <div class="col-md-12">
-            <div class="row">
-               <div class="products-tabs">
-                  <!-- tab -->
-                  <div id="tab1" class="tab-pane active">
-                     <div class="products-slick" data-nav="#slick-nav-1">
-                        @php
-                        $product = App\Models\FlashSalesProduct::inRandomOrder()->get();
-                        @endphp
-                        @forelse ($product as $item)
-                        <!-- product -->
-                        <div class="product">
-                           <div class="product-img">
-                              <img src="{{$item->product->product_photo}}" alt="">
-                              <div class="product-label">
-                                 @if ($item->product_discount)
-                                 <span class="sale">- {{round((100 * $item->product->product_discount) /$item->product->product_price)}} %</span>
-                                 <span class="new">NEW</span>
-                                 @else
-                                 <span class="new">NEW</span>
-                                 @endif
-                              </div>
-                           </div>
-                           <div class="product-body">
-                              <p class="product-category">{{$item->product->category->cat_name}}</p>
-                              <h3 class="product-name"><a href="{{url('/product/details/'.$item->product_id.'/'.$item->product->product_slug)}}">{{Str::limit($item->product->product_name,25,'...')}}</a></h3>
-                              <a href="{{url('/product/details/'.$item->product_id.'/'.$item->product->product_slug)}}">
-                                 @if ($item->flashsale->discount_type == 'cash')
-                                 <h4 class="product-price burned-text ">
-                                    {!!$currency->currency_symbol!!}{{number_format(($item->product->product_price-$item->flashsale->discount),2,'.',',')<= 0 ? $item->product->product_price : number_format(($item->product->product_price-$item->flashsale->discount),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($item->product->product_price, 2, '.', ',')}}</del>
-                                 </h4>
-                                 @else
-                                 <h3 class="product-price burned-text">{!!$currency->currency_symbol!!}{{number_format(($item->product->product_price-($item->product->product_price*$item->flashsale->discount/100)),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($item->product->product_price, 2, '.', ',')}}</del></h3>
-                                 @endif
-                              </a>
-                              @php
-                              $review = App\Models\Review::where('product_id',$item->id)->first();
-                              @endphp
-                              <div class="product-rating">
-                                 <i class="fa fa-star"></i>
-                                 <i class="fa fa-star"></i>
-                                 <i class="fa fa-star"></i>
-                                 <i class="fa fa-star"></i>
-                                 <i class="fa fa-star"></i>
-                              </div>
-                              <div class="product-btns">
-                                 <a class="add-to-wishlist p-3" href="{{route('add.wishlist',encrypt($item->product_id))}}"><i class="fa fa-heart-o"></i></a>
-
-                                 <a  href="{{url('/product/details/'.$item->product_id.'/'.$item->product->product_slug)}}" class="quick-view p-3"><i class="fa fa-eye"></i>
-                                 </a>
-
-                                 <a  href="{{url('/product/details/'.$item->product_id.'/'.$item->product->product_slug)}}" class="quick-view p-3"><i class="fa fa-shopping-cart"></i>
-                                 </a>
-
-                              </div>
-                           </div>
-                        </div>
-                        @empty
-                        <h4>No Record found</h4>
-                        @endforelse
-                     </div>
-                     <div id="slick-nav-1" class="products-slick-nav"></div>
-                  </div>
-               </div>
-               <!-- /tab -->
-            </div>
+            
          </div>
       </div>
       <!-- Products tab & slick -->
    </div>
-   @endif
    <!-- /row -->
+   @endif
 </div>
 <!-- /container -->
+
+<div class="section">
+   <div class="container">
+      <div class="row">
+         <div class="products-tabs">
+            <!-- tab -->
+            <div id="tab1" class="tab-pane active">
+               <div class="products-slick" data-nav="#slick-nav-1">
+                  @php
+                  $product = App\Models\FlashSalesProduct::inRandomOrder()->get();
+                  
+                  @endphp
+                  @forelse ($product as $item)
+                  <!-- product -->
+                  <div class="product">
+                     <div class="product-img">
+                        <img src="{{$item->product->product_photo}}" alt="">
+                        <div class="product-label">
+                           @if ($item->flashsale->discount_type == 'cash')
+                           <h1>f</h1>
+                              @if ($item->product_discount)
+                              <span class="sale">- {{round((100 * $item->discount) /$item->product_price)}} %</span>
+                              <span class="new">NEW</span>
+                              @else
+                              <span class="new">NEW</span>
+                              @endif
+                           @else
+                              {{-- @if ($item->product_discount) --}}
+                              <span class="sale">- {{round($item->discount)}} %</span>
+                              <span class="new">NEW</span>
+                              {{-- @else
+                              <span class="new">NEW</span>
+                              @endif --}}
+                           @endif 
+                        </div>
+                     </div>
+                     <div class="product-body">
+                        <p class="product-category">{{$item->product->category->cat_name}}</p>
+                        <h3 class="product-name"><a href="{{url('/product/details/'.$item->product_id.'/'.$item->product->product_slug)}}">{{Str::limit($item->product->product_name,25,'...')}}</a></h3>
+                        <a href="{{url('/product/details/'.$item->product_id.'/'.$item->product->product_slug)}}">
+                           @if ($item->flashsale->discount_type == 'cash')
+                           <h4 class="product-price burned-text ">
+                              {!!$currency->currency_symbol!!}{{number_format(($item->product->product_price-$item->discount),2,'.',',')<= 0 ? $item->product->product_price : number_format(($item->product->product_price-$item->flashsale->discount),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($item->product->product_price, 2, '.', ',')}}</del>
+                           </h4>
+                           @else
+                           <h3 class="product-price burned-text">{!!$currency->currency_symbol!!}{{number_format(($item->product->product_price-($item->product->product_price*$item->discount/100)),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($item->product->product_price, 2, '.', ',')}}</del></h3>
+                           @endif
+                        </a>
+                        @php
+                        $reviews = App\Models\Review::where('product_id', $item->id)->get();
+                        $totalPerson = count($reviews);
+                        $totalRating = $reviews->sum('rating');
+                        $averageRating = $totalPerson > 0 ? round($totalRating / $totalPerson) : 0;
+                        @endphp
+                        <div class="product-rating">
+                           @for ($i = 0; $i < $averageRating; $i++)
+                           <i class="fa fa-star"></i>
+                           @endfor
+                           @for ($i = $averageRating; $i < 5; $i++)
+                           <i class="fa fa-star-o empty"></i>
+                           @endfor
+                        </div>
+                        <div class="product-btns">
+                           <a class="add-to-wishlist p-3" href="{{route('add.wishlist',encrypt($item->product_id))}}"><i class="fa fa-heart-o"></i></a>
+                           <a  href="{{url('/product/details/'.$item->product_id.'/'.$item->product->product_slug)}}" class="quick-view p-3"><i class="fa fa-eye"></i>
+                           </a>
+                           <a  href="{{url('/product/details/'.$item->product_id.'/'.$item->product->product_slug)}}" class="quick-view p-3"><i class="fa fa-shopping-cart"></i>
+                           </a>
+                        </div>
+                     </div>
+                  </div>
+                  @empty
+                  <h4>No Record found</h4>
+                  @endforelse
+               </div>
+               <div id="slick-nav-1" class="products-slick-nav"></div>
+            </div>
+         </div>
+         <!-- /tab -->
+      </div>
+   </div>
+</div>
+
+
+
+
 </div>
 <!-- /SECTION -->
 {{-- category seection --}}
@@ -195,10 +207,10 @@ $stopTime = $timePeriod->end_time;
                @php
                $total_item = App\Models\Product::where('cat_id',$item->id)->count();
                @endphp
-               <div class="col-md-2 col-xs-3">
+               <div class="col-md-2 col-xs-3 my-3">
                   <div class="product" style="max-height: 400px !important">
                      <div class="product-img">
-                        <img style="width: 80px" src="{{asset($item->cat_photo)}}" alt="">
+                        <img style="width: 75px" src="{{asset($item->cat_photo)}}" alt="">
                      </div>
                      <div class="product-body">
                         <h3 class="product-name"><a href="{{route('cat_wise.product',$item->cat_slug)}}"> {{$item->cat_name}} </a></h3>
@@ -278,47 +290,50 @@ $stopTime = $timePeriod->end_time;
                                  <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</h4>
                                  @endif
                               </a>
+                              @php
+                              $reviews = App\Models\Review::where('product_id', $item->id)->get();
+                              $totalPerson = count($reviews);
+                              $totalRating = $reviews->sum('rating');
+                              $averageRating = $totalPerson > 0 ? round($totalRating / $totalPerson) : 0;
+                              @endphp
                               <div class="product-rating">
+                                 @for ($i = 0; $i < $averageRating; $i++)
                                  <i class="fa fa-star"></i>
-                                 <i class="fa fa-star"></i>
-                                 <i class="fa fa-star"></i>
-                                 <i class="fa fa-star"></i>
-                                 <i class="fa fa-star"></i>
+                                 @endfor
+                                 @for ($i = $averageRating; $i < 5; $i++)
+                                 <i class="fa fa-star-o empty"></i>
+                                 @endfor
                               </div>
                               <div class="product-btns">
-                                 <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-                                 <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-                                 <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
+                                 <a class="add-to-wishlist p-3" href="{{route('add.wishlist',encrypt($item->id))}}"><i class="fa fa-heart-o"></i></a>
+                                 <a  href="{{url('/product/details/'.$item->id.'/'.$item->product_slug)}}" class="quick-view p-3"><i class="fa fa-eye"></i>
+                                 </a>
+                                 <a  href="{{url('/product/details/'.$item->id.'/'.$item->product_slug)}}" class="quick-view p-3"><i class="fa fa-shopping-cart"></i>
+                                 </a>
                               </div>
                            </div>
-                           <div class="add-to-cart">
-                              <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                           </div>
-                           {{-- 
+                           <!-- /product -->
                         </div>
-                        --}}
-                        <!-- /product -->
+                        @empty
+                        <h4>No Record found</h4>
+                        @endforelse
                      </div>
-                     @empty
-                     <h4>No Record found</h4>
-                     @endforelse
+                     <div id="slick-nav-1" class="products-slick-nav"></div>
                   </div>
-                  <div id="slick-nav-1" class="products-slick-nav"></div>
                </div>
+               <!-- /tab -->
             </div>
-            <!-- /tab -->
          </div>
       </div>
+      <!-- Products tab & slick -->
    </div>
-   <!-- Products tab & slick -->
-</div>
-<!-- /row -->
+   <!-- /row -->
 </div>
 <!-- /container -->
 </div>
 <!-- /SECTION -->
 <!-- HOT DEAL SECTION -->
-<div id="hot-deal" class="section">
+{{-- <div id="hot-deal" class="section">
    <!-- container -->
    <div class="container">
       <!-- row -->
@@ -360,7 +375,7 @@ $stopTime = $timePeriod->end_time;
       <!-- /row -->
    </div>
    <!-- /container -->
-</div>
+</div> --}}
 <!-- /HOT DEAL SECTION -->
 <!-- SECTION -->
 <div class="section">
@@ -422,30 +437,33 @@ $stopTime = $timePeriod->end_time;
                                  <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</h4>
                                  @endif
                               </a>
+                              @php
+                              $reviews = App\Models\Review::where('product_id', $item->id)->get();
+                              $totalPerson = count($reviews);
+                              $totalRating = $reviews->sum('rating');
+                              $averageRating = $totalPerson > 0 ? round($totalRating / $totalPerson) : 0;
+                              @endphp
                               <div class="product-rating">
+                                 @for ($i = 0; $i < $averageRating; $i++)
                                  <i class="fa fa-star"></i>
-                                 <i class="fa fa-star"></i>
-                                 <i class="fa fa-star"></i>
-                                 <i class="fa fa-star"></i>
-                                 <i class="fa fa-star"></i>
+                                 @endfor
+                                 @for ($i = $averageRating; $i < 5; $i++)
+                                 <i class="fa fa-star-o empty"></i>
+                                 @endfor
                               </div>
                               <div class="product-btns">
-                                 <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-                                 <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-                                 <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
+                                 <a class="add-to-wishlist p-3" href="{{route('add.wishlist',encrypt($item->id))}}"><i class="fa fa-heart-o"></i></a>
+                                 <a  href="{{url('/product/details/'.$item->id.'/'.$item->product_slug)}}" class="quick-view p-3"><i class="fa fa-eye"></i>
+                                 </a>
+                                 <a  href="{{url('/product/details/'.$item->id.'/'.$item->product_slug)}}" class="quick-view p-3"><i class="fa fa-shopping-cart"></i>
+                                 </a>
                               </div>
                            </div>
-                           <div class="add-to-cart">
-                              <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-                           </div>
-                           {{-- 
+                           <!-- /product -->
                         </div>
-                        --}}
-                        <!-- /product -->
-                     </div>
-                     @empty
-                     <h4>No Record found</h4>
-                     @endforelse
+                        @empty
+                        <h4>No Record found</h4>
+                        @endforelse
                   </div>
                   <div id="slick-nav-2" class="products-slick-nav"></div>
                </div>

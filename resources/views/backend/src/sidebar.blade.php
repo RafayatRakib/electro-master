@@ -168,7 +168,7 @@
               {{-- end product --}}
 
               {{-- product marketing--}}
-              <li class="menu-item {{($route == 'admin.flash.sales' || $route == 'product.add')? 'active open' : ' '}}">
+              <li class="menu-item {{($route == 'admin.flash.sales' || $route == 'admin.flash.sales.all')? 'active open' : ' '}}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                   {{-- <i class="menu-icon tf-icons bx bx-layout"></i> --}}
                   <i class='menu-icon bx bx-store' ></i>
@@ -178,17 +178,17 @@
                 <ul class="menu-sub">
                   <li class="menu-item {{($route == 'admin.flash.sales')? 'active' : ' '}}">
                     <a href="{{route('admin.flash.sales')}}" class="menu-link">
-                      <div data-i18n="Without menu">Flash Sales</div>
+                      <div data-i18n="Without menu">Flash Sales Add</div>
                     </a>
                   </li>
                 </ul>
-                {{-- <ul class="menu-sub">
-                  <li class="menu-item {{($route == 'product.add')? 'active' : ' '}}">
-                    <a href="{{route('product.add')}}" class="menu-link">
-                      <div data-i18n="Without menu">Add Product</div>
+                <ul class="menu-sub">
+                  <li class="menu-item {{($route == 'admin.flash.sales.all')? 'active' : ' '}}">
+                    <a href="{{route('admin.flash.sales.all')}}" class="menu-link">
+                      <div data-i18n="Without menu">Flash Sales List</div>
                     </a>
                   </li>
-                </ul> --}}
+                </ul>
               </li>
               {{-- end product --}}
 
@@ -386,10 +386,99 @@
                 <span class="menu-header-text">Pages</span>
             </li>
 
+            
+                {{-- Page managment --}}
+                <li class="menu-item {{($route == 'admin.all.page' || $route == 'admin.add.page')? 'active open' : ' '}}">
+                  <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class='menu-icon bx bx-book'></i>
+                    <div data-i18n="Layouts">Page Managment</div>
+                  </a>
+                
+                  <ul class="menu-sub">
+                    <li class="menu-item {{($route == 'admin.add.page')? 'active' : ' '}}">
+                      <a href="{{route('admin.add.page')}}" class="menu-link">
+                        <div data-i18n="Without menu">Create Page</div>
+                      </a>
+                    </li>
+                  </ul>
+  
+                  <ul class="menu-sub">
+                    <li class="menu-item {{($route == 'admin.all.page')? 'active' : ' '}}">
+                      <a href="{{route('admin.all.page')}}" class="menu-link">
+                        <div data-i18n="Without menu">All Pages</div>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                {{-- //page managment end --}}
+
+              {{-- gallery managment start--}}
+                <li class="menu-item {{($route == 'admin.all.image' || $route == 'admin.add.image')? 'active open' : ' '}}">
+                  <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class='menu-icon bx bx-image'></i>
+                    <div data-i18n="Layouts">Gallery</div>
+                  </a>
+                
+                  <ul class="menu-sub">
+                    <li class="menu-item {{($route == 'admin.add.image')? 'active' : ' '}}">
+                      <a href="{{route('admin.add.image')}}" class="menu-link">
+                        <div data-i18n="Without menu">Add Images</div>
+                      </a>
+                    </li>
+                  </ul>
+  
+                  <ul class="menu-sub">
+                    <li class="menu-item {{($route == 'admin.all.image')? 'active' : ' '}}">
+                      <a href="{{route('admin.all.image')}}" class="menu-link">
+                        <div data-i18n="Without menu">All Images</div>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              {{-- //gallery managment end  --}}
+
+              {{-- gallery managment start--}}
+                <li class="menu-item {{($route == 'admin.mail' || $route == 'admin.send.mail')? 'active open' : ' '}}">
+                  <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class='menu-icon bx bx-mail-send'></i>
+                    <div data-i18n="Layouts">Mail</div>
+                  </a>
+                
+                  <ul class="menu-sub">
+                    <li class="menu-item {{($route == 'admin.mail')? 'active' : ' '}}">
+                      <a href="{{route('admin.mail')}}" class="menu-link">
+                        <div data-i18n="Without menu">Send Mail</div>
+                      </a>
+                    </li>
+                  </ul>
+                  
+                  <ul class="menu-sub">
+                    <li class="menu-item {{($route == 'admin.all.image')? 'active' : ' '}}">
+                      <a href="{{route('admin.all.image')}}" class="menu-link">
+                        <div data-i18n="Without menu">Get Mail</div>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              {{-- //gallery managment end  --}}
+
+
+              
+
+
+
+
+
+
+
+
+
+
+
 
                       
           {{-- employ mgt system --}}
-          <li class="menu-item {{($route == 'active.employer' || $route == 'add.employer' || $route == 'role.employer' || $route == 'all.employer')? 'active open' : ' '}}">
+          {{-- <li class="menu-item {{($route == 'active.employer' || $route == 'add.employer' || $route == 'role.employer' || $route == 'all.employer')? 'active open' : ' '}}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
               <i class='menu-icon bx bx-street-view'></i>
               <div data-i18n="Layouts">Employ Managment</div>
@@ -428,7 +517,7 @@
               </li>
             </ul>
             
-          </li>
+          </li> --}}
 {{-- employ mgt system end--}}
 
 

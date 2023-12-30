@@ -40,26 +40,69 @@ $wishlist = App\Models\Wishlist::where('user_id',Auth::id())->get();
                   <tr>
                      <th>SL</th>
                     <th colspan="2">Product</th>
-                    <th>Unit Price</th>
-                    <th>Quantity</th>
+                    <th>Regular Price</th>
+                    <th>Current Price</th>
                     <th>Remove</th>
                  </tr >
               </thead>
               <tbody id="tbody">
 
-                 @forelse ($wishlist as $key => $item)
-                 <tr>
-                    <td>{{$key+1}}</td>
-                    <td><img style="width: 60px" src="{{asset($item->product->product_photo)}}"></td>
-                    <td>{{$item->product->product_name}}</td>
-                    <td> {!!$currency->currency_symbol !!} {{ number_format($value,2,'.',',')}}</td>
-                    <td>{{$item->qty}}</td>
-                    <td>
-                       <a class="btn" href="{{route('cart_item_delete',encrypt($item->id))}}" onclick="return confirm('Are you sure you want to remove it?')"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-                 </tr>
-                 @empty
-                 <h4>Wishlist is empty</h4>
-                 @endforelse
+               @forelse ($wishlist as  $key => $item)
+               @php
+                   $flashSales = App\Models\FlashSalesProduct::where('product_id',$item->product_id)->first();
+               @endphp
+
+               @if ($flashSales && $flashSales->flashsale->end_time >= Carbon\Carbon::now())
+              
+               
+               <tr>
+                  <td>{{$key+1}}</td>
+                  <td><img style="width: 60px" src="{{asset($item->product->product_photo)}}"></td>
+                  <td style="width: 50%">{{$item->product->product_name}}</td>
+                  <td><del>{{number_format($item->product->product_price,2,'.',',')}}</del></td>
+                  @if ($flashSales->flashsale->discount_type == 'percentage')
+                  @php 
+                     $discountPrice = $item->product->product_price - (($item->product->product_price  / 100) * $flashSales->flashsale->discount );
+              
+                  @endphp
+                  <td> {!!$currency->currency_symbol !!} {{ number_format($discountPrice,2,'.',',')}}</td>
+                  @else
+                  @php 
+                     $discountPrice = $item->product->product_price - $flashSales->flashsale->discount ;
+              
+
+                  @endphp
+                  <td> {!!$currency->currency_symbol !!} {{ number_format($discountPrice,2,'.',',')}}</td>                      
+                  @endif
+                  
+                  <td>
+                     <a class="btn" href="{{route('cart_item_delete',encrypt($item->id))}}" onclick="return confirm('Are you sure you want to remove it?')"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                     <a class="btn" href="{{url('/product/details/'.$item->product_id.'/'.$item->product->product_slug)}}"><i class="fa fa-shopping-cart"></i></a>
+                   </td>
+               </tr>
+               {{-- @endif --}}
+               
+               @else
+                   @php
+               $value = $item->product->product_discount?$item->product->product_price -$item->product->product_discount : $item->product->product_price;
+                 @endphp
+               <tr>
+                  <td><input class="form-check-input customCheckbox" type="checkbox" name="cartcheckbox[]" value="{{$item->id}}" id="customCheckbox" checked=""></td>
+                  <td><img style="width: 60px" src="{{asset($item->product->product_photo)}}"></td>
+                  <td>{{$item->product->product_name}}</td>
+                  <td> {!!$currency->currency_symbol !!} {{ number_format($value,2,'.',',')}}</td>
+
+                  <td>
+                     <a class="btn" href="{{route('cart_item_delete',encrypt($item->id))}}" onclick="return confirm('Are you sure you want to remove it?')"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                     <a class="btn" href="{{url('/product/details/'.$item->product_id.'/'.$item->product->product_slug)}}" ><i class="fa fa-shopping-cart"></i></a>
+                   </td>
+               </tr>
+               @endif
+
+               @empty
+               <h4>Cart is empty</h4>
+               @endforelse
+                 
               </tbody>
            </table>
         </div>

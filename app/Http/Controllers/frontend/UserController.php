@@ -77,7 +77,8 @@ class UserController extends Controller
 
         // return redirect()->intended(RouteServiceProvider::HOME);
         if($back_route_name){
-            session()->flash('success','You are now login, please order or add to cart now');
+            // session()->flash('success','You are now login, please order or add to cart now');
+            toast('You are now login, please order or add to cart now','success');
             return redirect()->to($back_route_name);
         }
 
@@ -85,6 +86,7 @@ class UserController extends Controller
          return redirect()->route('admin.dashboard');   
         }
         elseif(Auth::user()->role === 'user'){
+            toast('Login succesfully','success');
             return redirect()->route('dashboard');   
         }
     }//end method
@@ -285,7 +287,8 @@ class UserController extends Controller
     }
     $user->update();
     // $user->name = $request->name??$user->name;
-    session()->flash('success','Credentials updated!');
+    // session()->flash('success','Credentials updated!');
+    toast('Credentials updated!','success');
     return redirect()->back();
     }//end method
 

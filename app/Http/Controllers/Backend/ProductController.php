@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\FlashSales;
+use App\Models\FlashSalesProduct;
 use App\Models\Inventory;
 use App\Models\Multi_photo;
 use App\Models\Product;
@@ -139,7 +141,22 @@ class ProductController extends Controller
                 ]);
             }
         }
-        session()->flash('success','Product added successfuly!');
+
+        if($request->flash_sales){
+            if($request->flash_sales_discount < $request->flash_sales_discount2){
+                session()->flash('success','Discount amount minimum '. $request->flash_sales_discount2);
+                return redirect()->back();
+            }
+            $flash_sales = new FlashSalesProduct;
+            $flash_sales->flash_sales_id = $request->flash_sales_id;
+            $flash_sales->product_id = $productid;
+            $flash_sales->discount = $request->flash_sales_discount;
+            $flash_sales->created_at = Carbon::now();
+            $flash_sales->save();
+        }
+
+        // session()->flash('success','Product added successfuly!');
+        toast('Product added successfuly!','success');
         return redirect()->route('admin.all.product');
     }// end method
 
@@ -277,7 +294,28 @@ class ProductController extends Controller
                 ]);
             }
         }
-        session()->flash('success','Product updated successfuly!');
+
+        if($request->flash_sales){
+            if($request->flash_sales_discount < $request->flash_sales_discount2){
+                session()->flash('success','Discount amount minimum'. $request->flash_sales_discount2);
+                return redirect()->back();
+            }
+            $ifExiest = FlashSalesProduct::where('flash_sales_id',$request->flash_sales_id )->where('product_id',$request->product_id)->first();
+            if(!$ifExiest){
+                $flash_sales = new FlashSalesProduct;
+                $flash_sales->flash_sales_id = $request->flash_sales_id;
+                $flash_sales->product_id = $request->product_id;
+                $flash_sales->discount = $request->flash_sales_discount;
+                $flash_sales->created_at = Carbon::now();
+                $flash_sales->save();
+            }else{
+                $ifExiest->discount = $request->flash_sales_discount;
+                $ifExiest->update();
+            }
+        }
+
+        // session()->flash('success','Product updated successfuly!');
+        toast('Product updated successfuly!','success');
         return redirect()->route('admin.all.product');
 
     }//end method

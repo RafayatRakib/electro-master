@@ -70,7 +70,8 @@
 
     {{-- <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> --}}
     {{-- <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script> --}}
-
+    <script src="{{ asset('vendor/sweetalert/sweetalert.min.js') }}"></script>
+    @include('sweetalert::alert')
     <script>
       $(document).ready(function() {
         $('#example').DataTable();
@@ -130,6 +131,21 @@
     placeholder: 'Hello, write some details here...',
     tabsize: 2,
     height: 120,
+    toolbar: [
+      ['style', ['style']],
+      ['font', ['bold', 'underline', 'clear']],
+      ['color', ['color']],
+      ['para', ['ul', 'ol', 'paragraph']],
+      ['table', ['table']],
+      ['insert', ['link', 'picture', 'video']],
+      ['view', ['fullscreen', 'codeview', 'help']]
+    ]
+  });
+
+  $('#summernote4').summernote({
+    placeholder: 'Hello, write some details here...',
+    tabsize: 2,
+    height: 500,
     toolbar: [
       ['style', ['style']],
       ['font', ['bold', 'underline', 'clear']],

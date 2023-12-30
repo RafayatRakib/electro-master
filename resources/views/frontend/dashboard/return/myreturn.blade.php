@@ -32,7 +32,7 @@
                                     <a class="nav-link" href="{{route('user.address')}}"><i class="fa fa-map-marker"></i> My Address</a>
                                 </li>
                                 <li class="dashboard-nav-item">
-                                    <a class="nav-link" href=""><i class="fa fa-user"></i> Account details</a>
+                                    <a class="nav-link" href="{{route('user.account')}}"><i class="fa fa-user"></i> Account details</a>
                                 </li>
                                 <li class="dashboard-nav-item">
                                     <a class="nav-link" href="{{route('logout')}}"><i class="fa fa-sign-out"></i> Logout</a>

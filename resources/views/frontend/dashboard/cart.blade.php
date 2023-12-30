@@ -63,14 +63,14 @@ $totalItem = count($cart);
                   <td>{{$item->product->product_name}}</td>
                   @if ($flashSales->flashsale->discount_type == 'percentage')
                   @php 
-                     $discountPrice = $item->product->product_price - (($item->product->product_price  / 100) * $flashSales->flashsale->discount );
+                     $discountPrice = $item->product->product_price - (($item->product->product_price  / 100) * ($flashSales->discount??$flashSales->flashsale->discount ));
                      $totalAmount+=$discountPrice;
                      $totalDlevery += $address->district->delivery_charge * $item->qty;
                   @endphp
                   <td> {!!$currency->currency_symbol !!} {{ number_format($discountPrice,2,'.',',')}}</td>
                   @else
                   @php 
-                     $discountPrice = $item->product->product_price - $flashSales->flashsale->discount ;
+                     $discountPrice = $item->product->product_price - ($flashSales->discount??$flashSales->flashsale->discount ) ;
                      $totalAmount+=$discountPrice;
                      $totalDlevery += $address->district->delivery_charge * $item->qty;
 

@@ -11,9 +11,12 @@ use App\Http\Controllers\backend\CurrencyController;
 use App\Http\Controllers\backend\EmployController;
 use App\Http\Controllers\backend\ExpenseController;
 use App\Http\Controllers\backend\FlashSalesController;
+use App\Http\Controllers\Backend\GalleryController;
 use App\Http\Controllers\backend\InventoryController;
 use App\Http\Controllers\backend\InvoiceController;
+use App\Http\Controllers\Backend\MassEmailController;
 use App\Http\Controllers\backend\OrderController;
+use App\Http\Controllers\Backend\PagesController;
 use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\backend\ProductReturnController;
 use App\Http\Controllers\Controller;
@@ -29,23 +32,10 @@ use App\Http\Middleware\Role;
 use App\Models\Inventory;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
 // Route::get('/', function () {
 //     // return view('frontend.master');
 //     return view('welcome');
 // });
-
-
 
 // admin route start
 Route::get('/admin/login',[AdminController::class,'login'])->name('admin.login.index');
@@ -238,11 +228,40 @@ Route::middleware(['auth','role:admin'])->group(function(){
         });
         //currency end
         Route::controller(FlashSalesController::class)->group(function(){
-            Route::get('/admin/flash/sales','FlashSales')->name('admin.flash.sales');
+            Route::get('/admin/flash/sales/all','FlashSalesAll')->name('admin.flash.sales.all');
+            Route::get('/admin/flash/sales/add','FlashSalesAdd')->name('admin.flash.sales');
+            Route::post('/store_flash_sale','store_flash_sale')->name('store_flash_sale');
+            Route::get('/view/flash/sale/{id}','viewFlashSale')->name('viewFlashSale');
+            Route::get('/remove/from/flash/sale/{id}', 'RemoveFromFlashSale') -> name('flashProduct');
+            Route::get('/edit/flash/sales/{id}','editFlashSale')->name('editFlashSale');
+            Route::post('/update_flash_sale','update_flash_sale')->name('update_flash_sale');
+
+        });
+
+        Route::controller(PagesController::class)->group(function(){
+            Route::get('/admin/add/page','AddPages')->name('admin.add.page');
+            Route::post('/admin/add/page','StorePage')->name('page.store');
+            Route::get('/admin/page/all','AllPage')->name('admin.all.page');
+            Route::get('/admin/edit/page/{id}','EditPage')->name('page.edit');
+            Route::post('/admin/update/page','UpdatePage')->name('page.update');
+            Route::post('/admin/page/delete','pageDelete')->name('page.delete');
+
+        });
+
+        Route::controller(GalleryController::class)->group(function (){
+            Route::get('/admin/gallery','gallery')->name('admin.all.image');    
+            Route::get('/admin/add/image','addImages')->name('admin.add.image');
+            Route::post('/admin/store/image','storeImage')->name('admin.store.image');
+            Route::get('/admin/image/delete/{path}','deleteImage')->name('admin.image.delete');
+        });
+
+        Route::controller(MassEmailController::class)->group(function(){
+            Route::get('/admin/send/mail','MailPage')->name('admin.mail');
+            Route::post('/admin/send/mail','sendMail')->name('admin.send.mail');
         });
 
 });
-// admin route end
+// admin route end admin.all.image
 
 
 //====================================================================================================================
@@ -267,6 +286,7 @@ Route::controller(HomeController::class)->group(function(){
     Route::get('/serach/product/by/ajax/brand','brand_wiseProduct_search')->name('brand_wise.product.search');
 
     Route::get('/search','search')->name('search');
+    Route::post('/news_letter','news_letter')->name('news_letter');
 });
 
 Route::controller(UserController::class)->group(function(){

@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('flash_sales', function (Blueprint $table) {
             $table->id();
             $table->string('flas_sales_name')->nullable();
+            $table->string('bg_photo')->nullable();
+            $table->string('short_note')->nullable();
             $table->string('discount')->nullable();
-            // $table->string('discount_type')->nullable();
             $table->enum('discount_type',['cash','percentage'])->nullable();
             $table->string('start_time')->nullable();
             $table->string('end_time')->nullable();

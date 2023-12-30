@@ -192,6 +192,39 @@
                             </div>
                         </div>
                     </div>
+                    <br>
+                    <hr>
+                    @php
+                    $flashSalse = App\Models\FlashSales::where('status','active')->first();
+                    $flasSalseProduct = App\Models\FlashSalesProduct::where('flash_sales_id',$flashSalse->id)->where('product_id',$product->id)->first();
+                    $currency = App\Models\Currency::where('status','active')->first();
+                @endphp 
+                @if ($flashSalse)
+                    
+                <div class="col">
+                    <div class="my-2">
+                        <div class="form-check mt-3">
+                            <input class="form-check-input"  name="flash_sales" {{$flasSalseProduct?'checked':''}} type="checkbox" value="featured" id="defaultCheck1">
+                            <label class="form-check-label" for="defaultCheck1"> Flash Sales </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="my-2">
+                    <label for="defaultFormControlInput" class="form-label">Flash Sales Discount</label>
+                    <input type="number" name="flash_sales_discount" min="{{$flashSalse->discount}}" value="{{$flasSalseProduct->discount??$flashSalse->discount}}" class="form-control" placeholder="parcentage or amount">
+                    <input type="hidden" name="flash_sales_id" value="{{$flashSalse->id}}">
+                    <input type="hidden" name="flash_sales_discount2" value="{{$flashSalse->discount}}">
+                    @if ($flashSalse->cash == 'cash')
+                    <small>Minimumu {{$flashSalse->discount}} {{$currency->currency}} discount</small>  
+                    @else
+                    <small>Minimumu {{$flashSalse->discount}} % discount</small>  
+                    @endif
+                    @if (session()->get('success'))
+                        <strong class="text-danger">{{session()->get('success')}}</strong>
+                    @endif
+                </div>
+                @endif
                     
                     <div class="mt-5">
                         <button class="btn btn-primary" type="submit">Update Product</button>

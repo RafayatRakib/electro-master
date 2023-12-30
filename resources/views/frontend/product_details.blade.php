@@ -88,10 +88,10 @@
                   @endphp
                      @if ($flashSales)
                      @if ($flashSales->flashsale->discount_type=='cash')
-                     <h3 class="product-price burned-text">{!!$currency->currency_symbol!!}{{number_format(($product->product_price-$flashSales->flashsale->discount > 0?$product->product_price-$flashSales->flashsale->discount:$product->product_price),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($product->product_price, 2, '.', ',')}}</del></h3>
+                     <h3 class="product-price burned-text">{!!$currency->currency_symbol!!}{{number_format(($product->product_price-$flashSales->flashsale->discount > 0?$product->product_price-$flashSales->discount:$product->product_price),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($product->product_price, 2, '.', ',')}}</del></h3>
 							    
                      @else
-                         <h3 class="product-price burned-text">{!!$currency->currency_symbol!!}{{number_format(($product->product_price-($product->product_price*$flashSales->flashsale->discount/100)),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($product->product_price, 2, '.', ',')}}</del></h3>
+                         <h3 class="product-price burned-text">{!!$currency->currency_symbol!!}{{number_format(($product->product_price-($product->product_price*$flashSales->discount/100)),2,'.',',')}}<del class="product-old-price">{!!$currency->currency_symbol!!}{{number_format($product->product_price, 2, '.', ',')}}</del></h3>
                      @endif
                         
                      @else
@@ -217,8 +217,8 @@
                               <div class="rating-avg">
                                  @if ($totalRating>0)
                                      
-                                 
-                                 <span> {{round($totalRating/$totalPerson,1)}} </span>
+                               
+                                 <span> {{$totalRating/$totalPerson}} </span>
                                  <div class="rating-stars">
                                     @for ($i = 0; $i < round($totalRating/$totalPerson); $i++)                                           
                                     <i class="fa fa-star"></i> 
@@ -474,27 +474,36 @@
                      <h4 class="product-price">{!!$currency->currency_symbol!!}{{number_format($item->product_price, 2, '.', ',')}}</h4>
                      @endif
                   </a>
+                  @php
+                  $reviews = App\Models\Review::where('product_id', $item->id)->get();
+                  $totalPerson = count($reviews);
+                  $totalRating = $reviews->sum('rating');
+                  $averageRating = $totalPerson > 0 ? round($totalRating / $totalPerson) : 0;
+                  @endphp
                   <div class="product-rating">
+                     @for ($i = 0; $i < $averageRating; $i++)
                      <i class="fa fa-star"></i>
-                     <i class="fa fa-star"></i>
-                     <i class="fa fa-star"></i>
-                     <i class="fa fa-star"></i>
-                     <i class="fa fa-star"></i>
+                     @endfor
+                     @for ($i = $averageRating; $i < 5; $i++)
+                     <i class="fa fa-star-o empty"></i>
+                     @endfor
                   </div>
                   <div class="product-btns">
-                     <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-                     <button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-                     <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
+                     <a class="add-to-wishlist p-3" href="{{route('add.wishlist',encrypt($item->id))}}"><i class="fa fa-heart-o"></i></a>
+                     <a  href="{{url('/product/details/'.$item->id.'/'.$item->product_slug)}}" class="quick-view p-3"><i class="fa fa-eye"></i>
+                     </a>
+                     <a  href="{{url('/product/details/'.$item->id.'/'.$item->product_slug)}}" class="quick-view p-3"><i class="fa fa-shopping-cart"></i>
+                     </a>
                   </div>
                </div>
-               <div class="add-to-cart">
-                  <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-               </div>
+
             </div>
             @empty
             <h4>No data found</h4>
             @endforelse
          </div>
+
+
          <!-- /product -->
          <!-- product -->
          {{-- 

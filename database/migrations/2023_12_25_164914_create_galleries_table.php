@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('flash_sales_products', function (Blueprint $table) {
+        Schema::create('galleries', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('flash_sales_id');
-            $table->bigInteger('product_id')->nullable();
-            $table->string('discount')->nullable();
+            $table->string('image_path')->nullable();
             $table->timestamps();
-            $table->foreign('flash_sales_id')->references('id')->on('flash_sales')->onDelete('cascade');
-
         });
     }
 
@@ -27,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('flash_sales_products');
+        Schema::dropIfExists('galleries');
     }
 };

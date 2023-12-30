@@ -117,7 +117,7 @@ class OrderController extends Controller
                 if(!$order->shipped_date){
                     $order->shipped_date = Carbon::now();
                 }
-
+ 
                 $order->delivered_date = Carbon::now();
                 $order->status = 'delivered';
                 $order->update();

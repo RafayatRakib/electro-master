@@ -31,11 +31,14 @@ class AuthenticatedSessionController extends Controller
 
         // return redirect()->intended(RouteServiceProvider::HOME);
         
+        
 
         if(Auth::user()->role === 'admin'){
+            toast('Admin Login succesfully','success');
          return redirect()->route('admin.dashboard');   
         }
         elseif(Auth::user()->role === 'user'){
+            toast('Login succesfully','success');
             return redirect()->route('dashboard');   
         }
         
@@ -77,6 +80,7 @@ class AuthenticatedSessionController extends Controller
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        toast('Logout succesfully','success');
         return $redirect;
         // if($user = 1){
         //     return redirect()->route('admin.login.index');;

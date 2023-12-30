@@ -9,13 +9,16 @@ use App\Models\ContactAndSocial;
 use App\Models\Currency;
 use App\Models\LogonAndName;
 use App\Models\Multi_photo;
+use App\Models\NewsLetter;
 use App\Models\Order_item;
 use App\Models\Pages;
 use App\Models\Product;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Svg\Tag\Rect;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
@@ -23,7 +26,12 @@ class HomeController extends Controller
         // $contact = ContactAndSocial::where('status', 'active')->first();
         // $currency =Currency::where('status','active')->get();
         // $logo =  LogonAndName::where('status','active')->first();
-        
+
+        $currencies = Cache::remember('currency', 30, function () {
+            // Fetch currencies from the source (e.g., database, API)
+            return Currency::where('status','active')->first(); // Replace this with your actual fetching logic
+        });
+
         return view('frontend.index');
     }// end method
 
@@ -135,6 +143,33 @@ class HomeController extends Controller
         }
     }//end method
 
+
+   public function news_letter(Request $request){
+    // dd($request);
+    $request->validate([
+        'news_letter' => 'required|email'
+    ],
+    [
+        'news_letter.email' => "Insert a valid email"
+    ]);
+    // $d = request()->header('User-Agent');
+    // $d =  $request->ip();
+    // dd($d);
+    $userEmail = User::where('email',$request->news_letter)->first();
+    $newsLetter = NewsLetter::where('email',$request->news_letter)->first();
+    if($userEmail || $newsLetter){
+        toast('Email already exiest','warning');
+        return redirect()->back();
+    }else{
+        $news_etter = new NewsLetter();
+        $news_etter->email = $request->news_letter;
+        $news_etter->ip = $request->ip();
+        $news_etter->save();
+        toast('Email saved to News letter, you can get update now','Success');
+        return redirect()->back();
+    }
+
+   }//end method
 
 
 
